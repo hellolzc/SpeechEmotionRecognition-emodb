@@ -1,0 +1,647 @@
+(base) zhaoci@tts-1080ti-186:~/Emotion/speech-emotion-recognition-master/examples$ python ml_example.py 
+curdir: /home/zhaoci/Emotion/speech-emotion-recognition-master/examples
+started reading folder Neutral
+/home/zhaoci/anaconda3/lib/python3.7/site-packages/scipy/io/wavfile.py:273: WavFileWarning: Chunk (non-data) not understood, skipping it.
+  WavFileWarning)
+ended reading folder Neutral
+started reading folder Angry
+ended reading folder Angry
+started reading folder Happy
+ended reading folder Happy
+started reading folder Sad
+ended reading folder Sad
+Starting Neural Network
+Iteration 1, loss = 1.93202359
+Iteration 2, loss = 1.11138826
+Iteration 3, loss = 0.66759690
+Iteration 4, loss = 0.48863272
+Iteration 5, loss = 0.32311486
+Iteration 6, loss = 0.22063032
+Iteration 7, loss = 0.15366621
+Iteration 8, loss = 0.10867184
+Iteration 9, loss = 0.07999189
+Iteration 10, loss = 0.06172571
+Iteration 11, loss = 0.04844547
+Iteration 12, loss = 0.03925283
+Iteration 13, loss = 0.03257730
+Iteration 14, loss = 0.02749608
+Iteration 15, loss = 0.02384662
+Iteration 16, loss = 0.02083386
+Iteration 17, loss = 0.01852145
+Iteration 18, loss = 0.01657829
+Iteration 19, loss = 0.01484420
+Iteration 20, loss = 0.01343898
+Iteration 21, loss = 0.01219016
+Iteration 22, loss = 0.01106863
+Iteration 23, loss = 0.01009611
+Iteration 24, loss = 0.00927269
+Iteration 25, loss = 0.00856309
+Iteration 26, loss = 0.00795788
+Iteration 27, loss = 0.00736815
+Iteration 28, loss = 0.00687988
+Iteration 29, loss = 0.00648412
+Iteration 30, loss = 0.00611077
+Iteration 31, loss = 0.00578840
+Iteration 32, loss = 0.00548153
+Iteration 33, loss = 0.00521402
+Iteration 34, loss = 0.00495299
+Iteration 35, loss = 0.00474259
+Iteration 36, loss = 0.00452624
+Iteration 37, loss = 0.00435521
+Iteration 38, loss = 0.00416564
+Iteration 39, loss = 0.00400977
+Iteration 40, loss = 0.00386333
+Iteration 41, loss = 0.00371091
+Iteration 42, loss = 0.00357777
+Iteration 43, loss = 0.00344820
+Iteration 44, loss = 0.00333243
+Iteration 45, loss = 0.00322931
+Iteration 46, loss = 0.00313546
+Iteration 47, loss = 0.00304461
+Iteration 48, loss = 0.00295967
+Iteration 49, loss = 0.00288311
+Iteration 50, loss = 0.00280881
+Iteration 51, loss = 0.00274098
+Iteration 52, loss = 0.00267399
+Iteration 53, loss = 0.00261514
+Iteration 54, loss = 0.00255361
+Iteration 55, loss = 0.00249981
+Iteration 56, loss = 0.00244386
+Training loss did not improve more than tol=0.000100 for 10 consecutive epochs. Stopping.
+[3 1 1 0 1 2 1 3 3 0 1 2 2 1 1 1 1 3 2 0 3 0 1 1 1 1 1 2 1 3 1 0 1 3 0 0 3
+ 3 1 0 1 0 1 2 0 3 3 3 0 0 3 1 1 1 0 1 0 3 3 0 3 3 3 1 2 0 0 0]
+(array([3]), array([1]), array([1]), array([0]), array([1]), array([2]), array([1]), array([3]), array([0]), array([0]), array([1]), array([1]), array([1]), array([1]), array([1]), array([1]), array([1]), array([3]), array([2]), array([0]), array([0]), array([3]), array([1]), array([1]), array([2]), array([1]), array([1]), array([0]), array([1]), array([3]), array([1]), array([0]), array([1]), array([0]), array([0]), array([0]), array([3]), array([3]), array([1]), array([0]), array([1]), array([0]), array([1]), array([1]), array([2]), array([3]), array([3]), array([3]), array([0]), array([0]), array([3]), array([1]), array([1]), array([1]), array([0]), array([1]), array([0]), array([3]), array([3]), array([0]), array([3]), array([3]), array([3]), array([1]), array([1]), array([0]), array([0]), array([0]))
+Accuracy:0.838
+
+Confusion matrix: [[16  0  1  1]
+ [ 0 24  1  0]
+ [ 1  4  2  0]
+ [ 3  0  0 15]]
+prediction [3] Actual 3
+
+
+
+
+
+
+
+
+
+
+
+(base) zhaoci@tts-1080ti-186:~/Emotion/speech-emotion-recognition-master/examples$ python cnn_example.py 
+Using TensorFlow backend.
+WARNING: Logging before flag parsing goes to stderr.
+W0212 17:55:38.566578 140310984558336 __init__.py:308] Limited tf.compat.v2.summary API due to missing TensorBoard installation.
+curdir: /home/zhaoci/Emotion/speech-emotion-recognition-master/examples
+started reading folder Neutral
+/home/zhaoci/anaconda3/lib/python3.7/site-packages/scipy/io/wavfile.py:273: WavFileWarning: Chunk (non-data) not understood, skipping it.
+  WavFileWarning)
+ended reading folder Neutral
+started reading folder Angry
+ended reading folder Angry
+started reading folder Happy
+ended reading folder Happy
+started reading folder Sad
+ended reading folder Sad
+W0212 17:55:40.841498 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:66: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+W0212 17:55:40.859605 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:541: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+W0212 17:55:40.861677 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4432: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
+
+W0212 17:55:40.887972 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:190: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+W0212 17:55:40.888129 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:197: The name tf.ConfigProto is deprecated. Please use tf.compat.v1.ConfigProto instead.
+
+2020-02-12 17:55:40.888423: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-02-12 17:55:40.896167: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2195210000 Hz
+2020-02-12 17:55:40.897447: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55bfa3e531e0 executing computations on platform Host. Devices:
+2020-02-12 17:55:40.897468: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): <undefined>, <undefined>
+2020-02-12 17:55:40.900514: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcuda.so.1
+2020-02-12 17:55:43.480086: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55bfa3814550 executing computations on platform CUDA. Devices:
+2020-02-12 17:55:43.480144: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 17:55:43.480154: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (1): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 17:55:43.480162: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (2): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 17:55:43.480172: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (3): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 17:55:43.486849: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 0 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:03:00.0
+2020-02-12 17:55:43.488244: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 1 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:04:00.0
+2020-02-12 17:55:43.489653: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 2 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:81:00.0
+2020-02-12 17:55:43.491105: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 3 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:82:00.0
+2020-02-12 17:55:43.491630: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2020-02-12 17:55:43.494246: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+2020-02-12 17:55:43.496520: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcufft.so.10.0
+2020-02-12 17:55:43.497080: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcurand.so.10.0
+2020-02-12 17:55:43.499958: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-12 17:55:43.502206: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-12 17:55:43.508793: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudnn.so.7
+2020-02-12 17:55:43.517951: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1763] Adding visible gpu devices: 0, 1, 2, 3
+2020-02-12 17:55:43.518021: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2020-02-12 17:55:43.523796: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1181] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-12 17:55:43.523822: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1187]      0 1 2 3 
+2020-02-12 17:55:43.523832: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 0:   N Y N N 
+2020-02-12 17:55:43.523839: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 1:   Y N N N 
+2020-02-12 17:55:43.523846: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 2:   N N N Y 
+2020-02-12 17:55:43.523856: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 3:   N N Y N 
+2020-02-12 17:55:43.530284: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10468 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2020-02-12 17:55:43.531776: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 10470 MB memory) -> physical GPU (device: 1, name: GeForce GTX 1080 Ti, pci bus id: 0000:04:00.0, compute capability: 6.1)
+2020-02-12 17:55:43.533288: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:2 with 10470 MB memory) -> physical GPU (device: 2, name: GeForce GTX 1080 Ti, pci bus id: 0000:81:00.0, compute capability: 6.1)
+2020-02-12 17:55:43.535305: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:3 with 10470 MB memory) -> physical GPU (device: 3, name: GeForce GTX 1080 Ti, pci bus id: 0000:82:00.0, compute capability: 6.1)
+W0212 17:55:44.392044 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:2041: The name tf.nn.fused_batch_norm is deprecated. Please use tf.compat.v1.nn.fused_batch_norm instead.
+
+W0212 17:55:44.567895 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4267: The name tf.nn.max_pool is deprecated. Please use tf.nn.max_pool2d instead.
+
+W0212 17:55:44.897951 140310984558336 deprecation.py:506] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3733: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+W0212 17:55:44.918686 140310984558336 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/optimizers.py:793: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+W0212 17:55:44.937708 140310984558336 deprecation.py:323] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/tensorflow/python/ops/nn_impl.py:180: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_1 (Conv2D)            (None, 186, 27, 8)        1360      
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 186, 27, 8)        32        
+_________________________________________________________________
+activation_1 (Activation)    (None, 186, 27, 8)        0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 174, 15, 8)        10824     
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 174, 15, 8)        32        
+_________________________________________________________________
+activation_2 (Activation)    (None, 174, 15, 8)        0         
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 87, 15, 8)         0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 75, 3, 8)          10824     
+_________________________________________________________________
+batch_normalization_3 (Batch (None, 75, 3, 8)          32        
+_________________________________________________________________
+activation_3 (Activation)    (None, 75, 3, 8)          0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            (None, 74, 2, 8)          264       
+_________________________________________________________________
+batch_normalization_4 (Batch (None, 74, 2, 8)          32        
+_________________________________________________________________
+activation_4 (Activation)    (None, 74, 2, 8)          0         
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 (None, 37, 2, 8)          0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 592)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 64)                37952     
+_________________________________________________________________
+batch_normalization_5 (Batch (None, 64)                256       
+_________________________________________________________________
+activation_5 (Activation)    (None, 64)                0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 64)                0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 4)                 260       
+=================================================================
+Total params: 61,868
+Trainable params: 61,676
+Non-trainable params: 192
+_________________________________________________________________
+None
+Epoch 1/1
+2020-02-12 17:55:47.130676: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+2020-02-12 17:55:47.378670: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudnn.so.7
+271/271 [==============================] - 3s 10ms/step - loss: 0.6796 - acc: 0.6910
+68/68 [==============================] - 0s 4ms/step
+Epoch 1/1
+271/271 [==============================] - 0s 590us/step - loss: 0.4034 - acc: 0.8127
+68/68 [==============================] - 0s 195us/step
+Epoch 1/1
+271/271 [==============================] - 0s 550us/step - loss: 0.2356 - acc: 0.9244
+68/68 [==============================] - 0s 197us/step
+Epoch 1/1
+271/271 [==============================] - 0s 556us/step - loss: 0.1568 - acc: 0.9622
+68/68 [==============================] - 0s 197us/step
+Epoch 1/1
+271/271 [==============================] - 0s 558us/step - loss: 0.1146 - acc: 0.9788
+68/68 [==============================] - 0s 190us/step
+Epoch 1/1
+271/271 [==============================] - 0s 567us/step - loss: 0.0692 - acc: 0.9954
+68/68 [==============================] - 0s 207us/step
+Epoch 1/1
+271/271 [==============================] - 0s 592us/step - loss: 0.0547 - acc: 0.9982
+68/68 [==============================] - 0s 198us/step
+Epoch 1/1
+271/271 [==============================] - 0s 593us/step - loss: 0.0443 - acc: 0.9991
+68/68 [==============================] - 0s 206us/step
+Epoch 1/1
+271/271 [==============================] - 0s 581us/step - loss: 0.0333 - acc: 1.0000
+68/68 [==============================] - 0s 206us/step
+Epoch 1/1
+271/271 [==============================] - 0s 558us/step - loss: 0.0298 - acc: 0.9991
+68/68 [==============================] - 0s 207us/step
+Epoch 1/1
+271/271 [==============================] - 0s 581us/step - loss: 0.0261 - acc: 1.0000
+68/68 [==============================] - 0s 208us/step
+Epoch 1/1
+271/271 [==============================] - 0s 613us/step - loss: 0.0240 - acc: 1.0000
+68/68 [==============================] - 0s 213us/step
+Epoch 1/1
+271/271 [==============================] - 0s 612us/step - loss: 0.0179 - acc: 1.0000
+68/68 [==============================] - 0s 246us/step
+Epoch 1/1
+271/271 [==============================] - 0s 615us/step - loss: 0.0161 - acc: 1.0000
+68/68 [==============================] - 0s 216us/step
+Epoch 1/1
+271/271 [==============================] - 0s 591us/step - loss: 0.0190 - acc: 1.0000
+68/68 [==============================] - 0s 237us/step
+Epoch 1/1
+271/271 [==============================] - 0s 591us/step - loss: 0.0147 - acc: 1.0000
+68/68 [==============================] - 0s 197us/step
+Epoch 1/1
+271/271 [==============================] - 0s 581us/step - loss: 0.0113 - acc: 1.0000
+68/68 [==============================] - 0s 216us/step
+Epoch 1/1
+271/271 [==============================] - 0s 598us/step - loss: 0.0104 - acc: 1.0000
+68/68 [==============================] - 0s 197us/step
+Epoch 1/1
+271/271 [==============================] - 0s 598us/step - loss: 0.0094 - acc: 1.0000
+68/68 [==============================] - 0s 208us/step
+Epoch 1/1
+271/271 [==============================] - 0s 617us/step - loss: 0.0087 - acc: 1.0000
+68/68 [==============================] - 0s 204us/step
+Epoch 1/1
+271/271 [==============================] - 0s 607us/step - loss: 0.0087 - acc: 1.0000
+68/68 [==============================] - 0s 207us/step
+Epoch 1/1
+271/271 [==============================] - 0s 598us/step - loss: 0.0080 - acc: 1.0000
+68/68 [==============================] - 0s 211us/step
+Epoch 1/1
+271/271 [==============================] - 0s 601us/step - loss: 0.0082 - acc: 1.0000
+68/68 [==============================] - 0s 189us/step
+Epoch 1/1
+271/271 [==============================] - 0s 582us/step - loss: 0.0075 - acc: 1.0000
+68/68 [==============================] - 0s 200us/step
+Epoch 1/1
+271/271 [==============================] - 0s 589us/step - loss: 0.0103 - acc: 1.0000
+68/68 [==============================] - 0s 202us/step
+Epoch 1/1
+271/271 [==============================] - 0s 602us/step - loss: 0.0050 - acc: 1.0000
+68/68 [==============================] - 0s 209us/step
+Epoch 1/1
+271/271 [==============================] - 0s 568us/step - loss: 0.0073 - acc: 1.0000
+68/68 [==============================] - 0s 204us/step
+Epoch 1/1
+271/271 [==============================] - 0s 605us/step - loss: 0.0047 - acc: 1.0000
+68/68 [==============================] - 0s 200us/step
+Epoch 1/1
+271/271 [==============================] - 0s 598us/step - loss: 0.0058 - acc: 1.0000
+68/68 [==============================] - 0s 204us/step
+Epoch 1/1
+271/271 [==============================] - 0s 613us/step - loss: 0.0096 - acc: 1.0000
+68/68 [==============================] - 0s 200us/step
+Epoch 1/1
+271/271 [==============================] - 0s 591us/step - loss: 0.0047 - acc: 1.0000
+68/68 [==============================] - 0s 194us/step
+Epoch 1/1
+271/271 [==============================] - 0s 581us/step - loss: 0.0071 - acc: 1.0000
+68/68 [==============================] - 0s 207us/step
+Epoch 1/1
+271/271 [==============================] - 0s 571us/step - loss: 0.0065 - acc: 1.0000
+68/68 [==============================] - 0s 211us/step
+Epoch 1/1
+271/271 [==============================] - 0s 592us/step - loss: 0.0043 - acc: 1.0000
+68/68 [==============================] - 0s 190us/step
+Epoch 1/1
+271/271 [==============================] - 0s 566us/step - loss: 0.0041 - acc: 1.0000
+68/68 [==============================] - 0s 200us/step
+Epoch 1/1
+271/271 [==============================] - 0s 560us/step - loss: 0.0028 - acc: 1.0000
+68/68 [==============================] - 0s 205us/step
+Epoch 1/1
+271/271 [==============================] - 0s 588us/step - loss: 0.0032 - acc: 1.0000
+68/68 [==============================] - 0s 206us/step
+Epoch 1/1
+271/271 [==============================] - 0s 588us/step - loss: 0.0038 - acc: 1.0000
+68/68 [==============================] - 0s 203us/step
+Epoch 1/1
+271/271 [==============================] - 0s 575us/step - loss: 0.0049 - acc: 1.0000
+68/68 [==============================] - 0s 198us/step
+Epoch 1/1
+271/271 [==============================] - 0s 586us/step - loss: 0.0035 - acc: 1.0000
+68/68 [==============================] - 0s 199us/step
+Epoch 1/1
+271/271 [==============================] - 0s 641us/step - loss: 0.0033 - acc: 1.0000
+68/68 [==============================] - 0s 195us/step
+Epoch 1/1
+271/271 [==============================] - 0s 612us/step - loss: 0.0042 - acc: 1.0000
+68/68 [==============================] - 0s 203us/step
+Epoch 1/1
+271/271 [==============================] - 0s 598us/step - loss: 0.0095 - acc: 0.9982
+68/68 [==============================] - 0s 200us/step
+Epoch 1/1
+271/271 [==============================] - 0s 673us/step - loss: 0.0220 - acc: 0.9954
+68/68 [==============================] - 0s 205us/step
+Epoch 1/1
+271/271 [==============================] - 0s 582us/step - loss: 0.0201 - acc: 0.9972
+68/68 [==============================] - 0s 194us/step
+Epoch 1/1
+271/271 [==============================] - 0s 633us/step - loss: 0.0181 - acc: 0.9991
+68/68 [==============================] - 0s 202us/step
+Epoch 1/1
+271/271 [==============================] - 0s 594us/step - loss: 0.0127 - acc: 1.0000
+68/68 [==============================] - 0s 206us/step
+Epoch 1/1
+271/271 [==============================] - 0s 615us/step - loss: 0.0096 - acc: 1.0000
+68/68 [==============================] - 0s 205us/step
+Epoch 1/1
+271/271 [==============================] - 0s 645us/step - loss: 0.0093 - acc: 1.0000
+68/68 [==============================] - 0s 210us/step
+Epoch 1/1
+271/271 [==============================] - 0s 616us/step - loss: 0.0053 - acc: 1.0000
+68/68 [==============================] - 0s 203us/step
+[3 1 1 0 1 2 1 3 3 0 1 2 2 1 1 1 1 3 2 0 3 0 1 1 1 1 1 2 1 3 1 0 1 3 0 0 3
+ 3 1 0 1 0 1 2 0 3 3 3 0 0 3 1 1 1 0 1 0 3 3 0 3 3 3 1 2 0 0 0]
+(3, 1, 1, 0, 1, 2, 2, 3, 0, 0, 1, 2, 1, 1, 1, 1, 1, 0, 1, 0, 3, 2, 1, 1, 1, 1, 2, 2, 1, 3, 1, 0, 1, 0, 0, 0, 3, 0, 1, 0, 1, 0, 1, 2, 1, 0, 0, 3, 0, 0, 3, 1, 1, 1, 2, 1, 0, 3, 2, 0, 3, 3, 0, 1, 1, 0, 0, 2)
+Accuracy:0.750
+
+Confusion matrix: [[14  1  3  0]
+ [ 0 23  2  0]
+ [ 0  3  4  0]
+ [ 7  0  1 10]]
+prediction 2 Actual 3
+CNN Done
+
+
+
+
+
+
+
+
+
+
+
+(base) zhaoci@tts-1080ti-186:~/Emotion/speech-emotion-recognition-master/examples$ python lstm_example.py 
+Using TensorFlow backend.
+WARNING: Logging before flag parsing goes to stderr.
+W0212 18:12:07.865437 140506626885376 __init__.py:308] Limited tf.compat.v2.summary API due to missing TensorBoard installation.
+curdir: /home/zhaoci/Emotion/speech-emotion-recognition-master/examples
+started reading folder Neutral
+/home/zhaoci/anaconda3/lib/python3.7/site-packages/scipy/io/wavfile.py:273: WavFileWarning: Chunk (non-data) not understood, skipping it.
+  WavFileWarning)
+ended reading folder Neutral
+started reading folder Angry
+ended reading folder Angry
+started reading folder Happy
+ended reading folder Happy
+started reading folder Sad
+ended reading folder Sad
+Starting LSTM
+W0212 18:12:10.294608 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:66: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+W0212 18:12:10.347957 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:541: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+W0212 18:12:10.356079 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4432: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
+
+W0212 18:12:10.616504 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:148: The name tf.placeholder_with_default is deprecated. Please use tf.compat.v1.placeholder_with_default instead.
+
+W0212 18:12:10.623055 140506626885376 deprecation.py:506] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3733: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+W0212 18:12:10.672081 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/optimizers.py:793: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+W0212 18:12:10.690885 140506626885376 deprecation_wrapper.py:119] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3657: The name tf.log is deprecated. Please use tf.math.log instead.
+
+W0212 18:12:10.694630 140506626885376 deprecation.py:323] From /home/zhaoci/anaconda3/lib/python3.7/site-packages/tensorflow/python/ops/nn_impl.py:180: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_1 (LSTM)                (None, 128)               86016     
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 128)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 32)                4128      
+_________________________________________________________________
+dense_2 (Dense)              (None, 16)                528       
+_________________________________________________________________
+dense_3 (Dense)              (None, 4)                 68        
+=================================================================
+Total params: 90,740
+Trainable params: 90,740
+Non-trainable params: 0
+_________________________________________________________________
+None
+Epoch 1/1
+2020-02-12 18:12:11.820157: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-02-12 18:12:11.838511: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2195210000 Hz
+2020-02-12 18:12:11.841820: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x559018c957c0 executing computations on platform Host. Devices:
+2020-02-12 18:12:11.841864: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): <undefined>, <undefined>
+2020-02-12 18:12:11.846005: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcuda.so.1
+2020-02-12 18:12:14.502130: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x559018d49570 executing computations on platform CUDA. Devices:
+2020-02-12 18:12:14.502263: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 18:12:14.502279: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (1): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 18:12:14.502294: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (2): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 18:12:14.502309: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (3): GeForce GTX 1080 Ti, Compute Capability 6.1
+2020-02-12 18:12:14.509662: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 0 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:03:00.0
+2020-02-12 18:12:14.511147: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 1 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:04:00.0
+2020-02-12 18:12:14.512595: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 2 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:81:00.0
+2020-02-12 18:12:14.513982: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 3 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:82:00.0
+2020-02-12 18:12:14.514601: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2020-02-12 18:12:14.517454: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+2020-02-12 18:12:14.519906: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcufft.so.10.0
+2020-02-12 18:12:14.520528: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcurand.so.10.0
+2020-02-12 18:12:14.523805: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusolver.so.10.0
+2020-02-12 18:12:14.526233: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusparse.so.10.0
+2020-02-12 18:12:14.532959: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudnn.so.7
+2020-02-12 18:12:14.542500: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1763] Adding visible gpu devices: 0, 1, 2, 3
+2020-02-12 18:12:14.542577: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2020-02-12 18:12:14.548447: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1181] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-02-12 18:12:14.548481: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1187]      0 1 2 3 
+2020-02-12 18:12:14.548493: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 0:   N Y N N 
+2020-02-12 18:12:14.548501: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 1:   Y N N N 
+2020-02-12 18:12:14.548511: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 2:   N N N Y 
+2020-02-12 18:12:14.548521: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 3:   N N Y N 
+2020-02-12 18:12:14.554815: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10468 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2020-02-12 18:12:14.556352: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 10470 MB memory) -> physical GPU (device: 1, name: GeForce GTX 1080 Ti, pci bus id: 0000:04:00.0, compute capability: 6.1)
+2020-02-12 18:12:14.558301: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:2 with 10470 MB memory) -> physical GPU (device: 2, name: GeForce GTX 1080 Ti, pci bus id: 0000:81:00.0, compute capability: 6.1)
+2020-02-12 18:12:14.560342: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:3 with 10470 MB memory) -> physical GPU (device: 3, name: GeForce GTX 1080 Ti, pci bus id: 0000:82:00.0, compute capability: 6.1)
+2020-02-12 18:12:16.480952: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+271/271 [==============================] - 8s 29ms/step - loss: 0.5712 - acc: 0.7389
+68/68 [==============================] - 1s 8ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.5362 - acc: 0.7509
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.5066 - acc: 0.7694
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.4753 - acc: 0.7758
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.4499 - acc: 0.7832
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.4050 - acc: 0.8072
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.3851 - acc: 0.8201
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.3580 - acc: 0.8284
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 10ms/step - loss: 0.3558 - acc: 0.8293
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.3284 - acc: 0.8625
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.3068 - acc: 0.8552
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.3070 - acc: 0.8616
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.3110 - acc: 0.8570
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.2734 - acc: 0.8893
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.2552 - acc: 0.8875
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.2373 - acc: 0.9068
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.2411 - acc: 0.9004
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.2186 - acc: 0.9013
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1761 - acc: 0.9400
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1679 - acc: 0.9419
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1339 - acc: 0.9539
+68/68 [==============================] - 0s 4ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1209 - acc: 0.9659
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1272 - acc: 0.9493
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1054 - acc: 0.9705
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.1188 - acc: 0.9622
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1105 - acc: 0.9696
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.0872 - acc: 0.9751
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1002 - acc: 0.9613
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 13ms/step - loss: 0.1047 - acc: 0.9696
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 10ms/step - loss: 0.0900 - acc: 0.9742
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1130 - acc: 0.9677
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.2355 - acc: 0.9161
+68/68 [==============================] - 0s 4ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1629 - acc: 0.9363
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1680 - acc: 0.9308
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1368 - acc: 0.9483
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1594 - acc: 0.9299
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1667 - acc: 0.9244
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1527 - acc: 0.9446
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1407 - acc: 0.9456
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.1165 - acc: 0.9631
+68/68 [==============================] - 0s 6ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 10ms/step - loss: 0.1135 - acc: 0.9511
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0646 - acc: 0.9880
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0693 - acc: 0.9806
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 10ms/step - loss: 0.0808 - acc: 0.9732
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 4s 13ms/step - loss: 0.0954 - acc: 0.9686
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 12ms/step - loss: 0.0675 - acc: 0.9779
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0452 - acc: 0.9917
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0417 - acc: 0.9880
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0352 - acc: 0.9935
+68/68 [==============================] - 0s 5ms/step
+Epoch 1/1
+271/271 [==============================] - 3s 11ms/step - loss: 0.0281 - acc: 0.9945
+68/68 [==============================] - 0s 4ms/step
+[3 1 1 0 1 2 1 3 3 0 1 2 2 1 1 1 1 3 2 0 3 0 1 1 1 1 1 2 1 3 1 0 1 3 0 0 3
+ 3 1 0 1 0 1 2 0 3 3 3 0 0 3 1 1 1 0 1 0 3 3 0 3 3 3 1 2 0 0 0]
+(3, 1, 1, 0, 1, 1, 1, 3, 3, 0, 1, 1, 1, 1, 1, 1, 1, 3, 2, 0, 3, 3, 1, 1, 2, 1, 1, 2, 2, 3, 1, 0, 1, 0, 0, 3, 0, 3, 1, 3, 1, 3, 1, 2, 3, 3, 3, 0, 0, 3, 3, 1, 2, 1, 0, 1, 0, 3, 0, 0, 3, 3, 3, 1, 2, 0, 0, 0)
+Accuracy:0.765
+
+Confusion matrix: [[12  0  0  6]
+ [ 0 22  3  0]
+ [ 0  3  4  0]
+ [ 4  0  0 14]]
+prediction 0 Actual 3
