@@ -26,7 +26,7 @@ sys.path.append('..')
 
 from speechemotion.harry7.utilities import get_data, get_feature_vector_from_mfcc
 
-_DATA_PATH = '../data/'
+_DATA_PATH = '../data/emodb/'
 _CLASS_LABELS = ("neutral", "angry", "happy", "sad")
 
 
@@ -73,7 +73,7 @@ def ml_example():
     print('Starting', model.name)
     model.train(x_train, y_train)
     model.evaluate(x_test, y_test)
-    filename = '../data/wav/09b03Ta.wav'
+    filename = '../data/emodb/wav/09b03Ta.wav'
     print('prediction', model.predict_one(
         get_feature_vector_from_mfcc(filename, flatten=to_flatten)),
           'Actual 3')
@@ -119,7 +119,7 @@ def cnn_example():
                 num_classes=num_labels)
     model.train(x_train, y_train, x_test, y_test_train)
     model.evaluate(x_test, y_test)
-    filename = '../data/wav/09b03Ta.wav'
+    filename = '../data/emodb/wav/09b03Ta.wav'
     mfcc = get_feature_vector_from_mfcc(filename, flatten=to_flatten)
     mfcc = mfcc.reshape(mfcc.shape[0], mfcc.shape[1], 1)
     print('prediction', model.predict_one(mfcc), 'Actual 3')
@@ -158,7 +158,7 @@ def lstm_example():
                  num_classes=num_labels)
     model.train(x_train, y_train, x_test, y_test_train, n_epochs=50)
     model.evaluate(x_test, y_test)
-    filename = '../data/wav/09b03Ta.wav'
+    filename = '../data/emodb/wav/09b03Ta.wav'
     print('prediction', model.predict_one(
         get_feature_vector_from_mfcc(filename, flatten=to_flatten)),
           'Actual 3')
