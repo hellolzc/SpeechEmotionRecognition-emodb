@@ -105,7 +105,7 @@ class PipelineCV():
         X_df, Y_se = dataset.get_XY(feature_regex=feature_group)
         self.X_df = X_df
         self.Y_se = Y_se
-    
+
     def run_pipeline(self, seed):
         """ 一次交叉验证，对X，Y训练模型，返回结果的字典，包含DataFrame
         预测的标签由数据集中的label_group指定
@@ -113,11 +113,11 @@ class PipelineCV():
         X_df = self.X_df
         Y_se = self.Y_se
         assert X_df.shape[0] == Y_se.shape[0]
-        cv_result = pd.DataFrame(columns=['train_acc', 'test_acc',
+        fold_metrics = pd.DataFrame(columns=['train_acc', 'test_acc',
                                         'train_precision', 'train_recall', 'train_f1score',
                                         'test_precision', 'test_recall', 'test_f1score'])
 
-        each_fold_results = {}
+        k_fold_results = {}
         for ith in range(self.n_splits):
 
             X_train, X_test, Y_train, Y_test = self.get_data_scaled(X_df, Y_se, seed, ith)
@@ -128,8 +128,8 @@ class PipelineCV():
             else:
                 conf_mx += conf_mx_i
 
-            each_fold_results[ith] = fold_i_result
-            cv_result.loc[ith] = [
+            k_fold_results[ith] = fold_i_result
+            fold_metrics.loc[ith] = [
                 fold_i_stat['train_accuracy'],
                 fold_i_stat['test_accuracy'],
                 fold_i_stat['train_precision'],
@@ -141,11 +141,11 @@ class PipelineCV():
             ]
 
         print('Seed:%d'%seed, X_train.shape, X_test.shape, end='\t')
-        print(cv_result['test_acc'].mean())
-        DataLoader.save_result(each_fold_results, seed, self.feature_group.strip('^*'))
+        print(fold_metrics['test_acc'].mean())
+        DataLoader.save_result(k_fold_results, seed, self.feature_group.strip('^*'))
 
         result = {
-            'cv_result': cv_result,
+            'fold_metrics': fold_metrics,
             'conf_mx': conf_mx
         }
         return result

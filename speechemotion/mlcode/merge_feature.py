@@ -7,7 +7,7 @@ import os
 
 ####################  用于合并数据的部分  ########################
 
-DROP_COLUMNS = ['date', 'name', 'diagnosis_detail']  # 'no', 
+DROP_COLUMNS = []  # 'no', 
 
 def check_filepath_list(filepath_list):
     new_filepath_list = []
@@ -50,7 +50,7 @@ def merge_all(filepath_list, out_file_path, prefix_list=None):
     print(df0.head())
     print('Shape:', df0.shape)
     # 保存合并的数据
-    df0 = df0.drop(columns=DROP_COLUMNS)
+    # df0 = df0.drop(columns=DROP_COLUMNS)
     df0.set_index(keys='uuid', drop=True, inplace=True, verify_integrity=True)
     df0.to_csv(out_file_path)
     print('记得检查数据！')
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     if choose == 'all':
         # 合并不同的特征集
         allfeature_out_fp = proj_root_path + 'fusion/merged.csv'
-        merge_all([csv_label_path, duration_fp, linguistic_fp, syntactic_fp, egemaps_fp],
+        merge_all([csv_label_path, duration_fp, linguistic_fp, egemaps_fp],
                   allfeature_out_fp)
     else:
         print(USAGE_STR)

@@ -108,7 +108,7 @@ class DataSets():
         else:
             X = train_df
             Y = label_df
-        print('X.shape: ', X.shape, end='  ')
+        print('X.shape: ', X.shape)
         return X, Y
 
 
@@ -118,7 +118,7 @@ class DataSets():
         # 宽松限制
         print('Kepted class names:', class_namelist)
         mask = df[col_name].isin(class_namelist)
-        df = df[mask]
+        df = df[mask].copy()
         return df
 
     @staticmethod
@@ -204,7 +204,7 @@ class DataLoader(object):
         X = df_sampled.values
         y = df_sampled[self.label_name].values  # .squeeze()
 
-        kf = StratifiedKFold(n_splits=n_splits, random_state=seed)  # shuffle=True, 
+        kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
         print(kf)
 
         ith = 0
