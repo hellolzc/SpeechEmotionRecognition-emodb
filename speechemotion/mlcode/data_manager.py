@@ -29,6 +29,8 @@ class DataSets():
 
         self.data_ori = data_ori     # 从文件读取的原始数据
         self.df = self.data_ori.copy()  # 处理后的数据集
+        self.X_df = None  # X即特征属性值
+        self.Y_se = None  # y即label结果
 
     def reset_df(self):
         """重置 self.df, 取消所有 feature_engineering 步骤"""
@@ -77,16 +79,15 @@ class DataSets():
         self.df.to_csv(filename)
 
     # 用正则取出我们要的属性值
-    # 'label.*|age|total_duration|sex_.*|.*_speak_num|.*_speak_duration_sum|.*_speak_duration_mean|.*_speak_duration_std'
+    # 'label.*|age|total_duration|sex_.*|.*_speak_num'
     # train_df.drop(['age','education', 'sex_F', 'sex_M',], axis=1, inplace=True)
-    def get_XY(self, feature_items=None, feature_regex=None, label_col_name='label', return_matrix=False):
+    def feature_filter(self, feature_items=None, feature_regex=None, label_col_name='label'):
         """ 取出我们要的属性值
         feature_items : 选择的特征集list
         feature_regex : 选择的特征集用的正则, 和feature_items至少一个不是None
         label_group   : 要预测的标签列名
-        return_matrix : 为真则返回矩阵，否则返回DataFrame
-        return: X, Y
         """
+        print('Prepare X y:')
         # 取出需要的属性值
         if feature_items is not None:
             train_df = self.df.filter(items=feature_items)
@@ -94,22 +95,24 @@ class DataSets():
             assert feature_regex is not None
             train_df = self.df.filter(regex=feature_regex)
 
-        if DEBUG:
-            print(train_df.columns)
+        label_se = self.df[label_col_name]
 
-        label_df = self.df.loc[:, label_col_name]
+        self.X_df = train_df
+        self.Y_se = label_se
+        print('X.shape: ', train_df.shape, 'y.shape: ', label_se.shape)
+        print(train_df.columns)
 
+    def get_XY(self, return_matrix=False):
+        """ 取出我们要的属性值
+        return_matrix : 为真则返回矩阵，否则返回DataFrame
+        return: X, y
+        """
+        X = self.X_df
+        y = self.Y_se
         if return_matrix:
-            # X即特征属性值
-            X = train_df.values
-            # y即label结果
-            Y = label_df.values.squeeze()
-            print(X.shape, Y.shape)
-        else:
-            X = train_df
-            Y = label_df
-        print('X.shape: ', X.shape)
-        return X, Y
+            X = X.values
+            y = y.values.squeeze()
+        return X, y
 
 
     @staticmethod

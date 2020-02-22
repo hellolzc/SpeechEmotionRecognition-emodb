@@ -33,12 +33,12 @@ proj_root_path = '../'
 
 csv_label_path = proj_root_path + 'data/emodb/datalist.csv'
 
-# ['acoustic_CPE16.csv', 'acoustic_CPE16_lsa.csv',
-# 'acoustic_IS09.csv',  'acoustic_IS09_lsa.csv',
-# 'acoustic_IS10.csv',  'acoustic_IS10_lsa.csv',
-# 'acoustic_IS11.csv',  'acoustic_IS11_lsa.csv', 
-# 'acoustic_IS12.csv', , 'acoustic_IS12_lsa.csv',
-# 'acoustic_egemaps.csv',  'acoustic_egemaps_lsa.csv',
+# ['acoustic_CPE16.csv', 
+# 'acoustic_IS09.csv',
+# 'acoustic_IS10.csv',
+# 'acoustic_IS11.csv', 
+# 'acoustic_IS12.csv',
+# 'acoustic_egemaps.csv',
 # ]
 
 feature_choose = 'CPE16'
@@ -64,14 +64,14 @@ CLASS_NAMES=("neutral", "angry", "happy", "sad", "afraid", "boring", "disgust")
 file_path = '../fusion/tmp_merged.csv'
 ser_datasets = DataSets(file_path)
 
-# ad_datasets.df = ad_datasets.drop_nan_row(ad_datasets.df, 'mmse')
-
 
 # In[ ]:
 
 
 ser_datasets.feature_engineering(class_col_name=CLASS_COL_NAME, class_namelist=CLASS_NAMES, drop_cols=None)
 ser_datasets.write_tmp_df('../fusion/temp_data_after_FE.csv')
+
+ser_datasets.feature_filter(feature_regex='^%s_*' % feature_choose)
 
 print()
 ser_datasets.df.iloc[:, 0:16].describe()
@@ -158,9 +158,9 @@ svc_model =sklearn.svm.SVC()
 
 model_list = {
 #     'svm1':sklearn.svm.SVC(kernel='rbf', gamma=1e-4, C=10),
-#     'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
-    'svm1':GridSearchCV(svc_model, tuned_parameters[0], scoring='recall_macro', cv=4, n_jobs=10),
-    'svm2':GridSearchCV(svc_model, tuned_parameters[1], scoring='recall_macro', cv=4, n_jobs=10),
+    'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
+#     'svm1':GridSearchCV(svc_model, tuned_parameters[0], scoring='recall_macro', cv=4, n_jobs=10),
+#     'svm2':GridSearchCV(svc_model, tuned_parameters[1], scoring='recall_macro', cv=4, n_jobs=10),
 #     'lr1':linear_model.LogisticRegressionCV(Cs=[0.01, 0.1, 1], penalty='l1', solver='liblinear', cv=4),
 #     'rf1':RandomForestClassifier(n_estimators=50, max_leaf_nodes=5)
 }
@@ -180,7 +180,6 @@ model_list = {
 # model = Pipeline(steps=[('pca', pca), ('clf', model)])
 
 # duration egemaps linguistic score demographics    doctor all propose select test
-feature_group='^%s_*' % feature_choose
 
 
 # In[ ]:
@@ -196,7 +195,7 @@ get_ipython().system('mkdir -p log')
 from speechemotion.mlcode.main_exp import save_exp_log
 for key  in model_list:
     model = model_list[key]
-    result = main_experiment(ser_datasets, model, feature_group)
+    result = main_experiment(ser_datasets, model)
 
     conf_mx = result['conf_mx_sum']
     report = result['report']
@@ -209,12 +208,12 @@ for key  in model_list:
     save_exp_log({
         'Memo': '|'.join(CLASS_NAMES),
         'Data': 'File: %s, Shape:%s\n' % (acoustic_fp, str(ser_datasets.df.shape)) + \
-                '     feature_group: %s' % (feature_group),
+                '     feature_group: %s' % (feature_choose),
         'Model': '\n%s\n' % str(model),
         'Report': report,
         'Confusion Matrix': '\n%s\n' % repr(result['conf_mx_sum']),
         'CV_result_detail': result['cv_metrics_stat'].describe()
-    }, name_str=feature_group.strip('^*') )
+    }, name_str=feature_choose )
 
 
 # # Analysis

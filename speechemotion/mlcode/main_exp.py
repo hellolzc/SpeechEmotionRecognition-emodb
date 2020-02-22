@@ -38,7 +38,7 @@ def save_exp_log(report_dict, name_str='', float_format='%.4f', output_dir='./lo
             f.write('\n')
         f.write('\n')
 
-def main_experiment(ad_datasets, model, feature_group, seeds=None):
+def main_experiment(ad_datasets, model, seeds=None):
     """ 实验主过程: 多次调用pipelineCV之后取平均
     seeds 默认为 list(range(2008, 2018)), seeds的长度决定十折的次数，必须跟划分数据时所用的一致
     """
@@ -46,7 +46,6 @@ def main_experiment(ad_datasets, model, feature_group, seeds=None):
         seeds = list(range(2008, 2018))  # seeds的长度决定十折的次数
 
     print(model)
-    print('\n%s' % feature_group)
 
     # 用来记录十折每一折的结果
     fold_metrics_stat = pd.DataFrame(columns=['train_acc', 'test_acc','train_precision', 'train_recall', 'train_f1score',
@@ -54,8 +53,7 @@ def main_experiment(ad_datasets, model, feature_group, seeds=None):
     # 用来记录每次十折的平均结果
     cv_metrics_stat = pd.DataFrame(columns=['train_acc', 'test_acc','train_precision', 'train_recall', 'train_f1score',
                                           'test_precision', 'test_recall', 'test_f1score'], dtype=float)
-    pipelineCV = PipelineCV()
-    pipelineCV.set_pipeline(model, ad_datasets, feature_group=feature_group)
+    pipelineCV = PipelineCV(model, ad_datasets)
     for indx in range(len(seeds)):
         seed = seeds[indx]
         result = pipelineCV.run_pipeline(seed)

@@ -15,7 +15,7 @@ import scipy.io.wavfile as wav
 from speechpy.feature import mfcc
 
 mean_signal_length = 32000  # Empirically calculated for the given data set
-
+# note by hellolzc: 32000 points is 2 seconds if the sample rate is 16 kHz
 
 def get_feature_vector_from_mfcc(file_path: str, flatten: bool,
                                  mfcc_len: int = 39) -> np.ndarray:

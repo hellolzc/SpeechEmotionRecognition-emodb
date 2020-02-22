@@ -245,14 +245,14 @@ def show_confusion_matrix(confmat, save_pic_path=None):
     plt.show()
 
 # Evaluate
-def accuracy(predictions, Y_true):
+def accuracy(Y_true, predictions):
     """ calculate accuracy """
     error = np.squeeze(predictions) - np.squeeze(Y_true)
     #print(error)
     acc = sum(error == 0) / len(error)
     return acc
 
-def precision_recall_f1score(predictions, Y_true, pos_label=1, class_num=2):
+def precision_recall_f1score(Y_true, predictions, pos_label=1, class_num=2):
     """ calculate precision_recall_f1score
     二分类，建议使用F1分数作为最终评估标准, 这个只会返回关于pos_label类的score,
     三(多)分类，建议使用UAR作为最终评估标准,返回UAPrecision, UARecall, UAF1score
