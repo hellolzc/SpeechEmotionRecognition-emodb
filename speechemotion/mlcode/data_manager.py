@@ -3,8 +3,9 @@ import numpy as np
 import random
 import json
 import os
+import sys
 
-from sklearn.model_selection import KFold, GroupKFold, StratifiedKFold
+from sklearn.preprocessing import StandardScaler
 
 DEBUG = False
 def set_debug_print(debug_print):
@@ -14,14 +15,35 @@ def set_debug_print(debug_print):
     DEBUG = debug_print
 
 
-class DataSets():
+class DataSet():
+    """
+    DataSet is the abstract class which determines how a dataset should be.
+    Any dataset inheriting this class should do the following.
+
+    1.  Should implement the following abstract methods `get_data_scaled`,
+        `assign_data_splitter`. These methods are used by PipelineCV.
+
+    Attributes:
+        class_num (str): path to save the model.
+    """
+    def __init__(self):
+        self.class_num = None       # 这个和class_namelist选择相关
+        self.data_splitter = None
+
+    def assign_data_splitter(self, data_splitter):
+        self.data_splitter = data_splitter
+
+    def get_data_scaled(self, seed, ith, scale=True, data_splitter=None):
+        raise NotImplementedError()
+
+class MLDataSet(DataSet):
     """ 集中处理数据集筛选和特征工程问题
     self.data_ori : 保存从文件读取的原始数据
     self.df : 保存处理后的数据集
     """
     def __init__(self, file_path):
+        super(MLDataSet, self).__init__()
         self.file_path = file_path  # 数据文件的位置
-        self.class_num = None       # 这个和class_namelist选择相关
 
         print('Read File: %s' % file_path)
         # 这里索引列用第一列，第一列应该是uuid
@@ -181,114 +203,41 @@ class DataSets():
             print('\nInfo:These data contain duplicate value')
             print(val_cnts[val_cnts > 1])
 
-#####################################################################################
-SPLIT_FILE_HOME = os.path.join(os.path.dirname(__file__), '../../list/split/')
-class DataLoader(object):
-    """处理关于划分数据集的类"""
-    def __init__(self, n_splits=10, label_name='label'):
-        self.n_splits = n_splits
-        self.label_name = label_name
 
-    def split(self, df, seeds):
-        # 从这里开始 df里的数据顺序不能改变，否则会对不上号
-        # TODO: 支持上采样
-        print('shape of data_matrix', df.shape)
-        for seed in seeds:
-            self._splitCV(df, seed)
-
-    def _splitCV(self, df, seed):
-        """ 对df做K折交叉验证，生成分割文件，保存为 ${SPLIT_FILE_HOME}/split_%d.json
-        为了防止混乱，TXT中保存的是训练和测试对应的UUID，不是df序号
-        TODO: 做GroupKFold， group信息来源于df_sampled[group_col_name], group_col_name='participant_id'
+    
+    def get_data_scaled(self, seed, ith, scale=True, data_splitter=None):
+        """ 将X,Y划分成训练集和测试集并在训练集上做标准化，将参数应用到测试集上
+        eg.
+            X_train, X_test, Y_train, Y_test = get_data_scaled(data_splitter, 1998, 2)
+        description:
+            X_train.shape = (n_samples, x_dim)
+            X_test.shape = (n_samples, )
         """
-        n_splits = self.n_splits
-        df_sampled = df
+        data_splitter = data_splitter or self.data_splitter
+        if data_splitter is None:
+            sys.stderr.write(
+                "Provide a data_splitter to split data\n")
+            sys.exit(-1)
+        X_df, Y_se = self.get_XY()  # Y_se: Series
+        assert X_df.shape[0] == Y_se.shape[0]
+        train_index, test_index = data_splitter.read_split_file(seed, ith)
+        # print("TRAIN:", train_index, "TEST:", test_index)
+        X_train, X_test = X_df.loc[train_index].values, X_df.loc[test_index].values
+        Y_train, Y_test = Y_se.loc[train_index].values.squeeze(), Y_se.loc[test_index].values.squeeze()
 
-        X = df_sampled.values
-        y = df_sampled[self.label_name].values  # .squeeze()
-
-        kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
-        print(kf)
-
-        ith = 0
-        file_lines_dict = {}
-        for _, test_index in kf.split(X, y=y):  # , groups=groups
-            test_index = [df_sampled.index[val] for val in list(test_index)]
-            file_lines_dict[ith] = ','.join(test_index)
-            ith += 1
-
-        filename = SPLIT_FILE_HOME + 'split_%d.json' % (seed)
-        with open(filename, 'w') as f:
-            json.dump(file_lines_dict, f, indent=2, ensure_ascii=False)
-
-
-    @staticmethod
-    def read_split_file(seed, ith):
-        """ 指定种子和折编号，读取已保存的划分文件
-        """
-        filename = SPLIT_FILE_HOME + 'split_%d.json' % (seed)
-        with open(filename) as f:
-            data_dict = json.load(f, encoding='utf-8')
-            # lines = [line.strip() for line in f]
-        train_index = []
-        for key in data_dict:
-            if int(key) == ith:
-                test_index = data_dict[key].split(',')
-            else:
-                train_index.extend(data_dict[key].split(','))
-        return train_index, test_index
-
-    # 参考：https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html
-    @staticmethod
-    def read_split_file_innerCV(seed, outer_cv_ith, inner_cv_ith):
-        """ 指定种子和折编号，读取已保存的划分文件
-        nested cross-validation 比外层少一折
-        """
-        real_inner_cv_ith = inner_cv_ith
-        if inner_cv_ith >= outer_cv_ith:
-            real_inner_cv_ith += 1
-
-        filename = SPLIT_FILE_HOME + 'split_%d.json' % (seed)
-        with open(filename) as f:
-            data_dict = json.load(f, encoding='utf-8')
-
-        train_index = []
-        for key in data_dict:
-            if int(key) == outer_cv_ith:
-                continue
-            elif int(key) == real_inner_cv_ith:
-                test_index = data_dict[key].split(',')
-            else:
-                train_index.extend(data_dict[key].split(','))
-        return train_index, test_index
-
-    @staticmethod
-    def array2CSstr(result_array):
-        """convert result 1-d array to comma separated string"""
-        result_list = [str(val) for val in list(result_array)]
-        return ','.join(result_list)
-
-    @staticmethod
-    def CSstr2array(result_str):
-        """convert comma separated string to 1-d array"""
-        result_list = result_str.split(',')
-        return np.array([float(val) for val in result_list])
-
-    @staticmethod
-    def save_result(data_dict, seed, suffix):
-        """保存预测结果"""
-        filename = '../list/result/split_%d_%s.txt' % (seed, suffix)
-        with open(filename, 'w') as f:
-            json.dump(data_dict, f, indent=2, ensure_ascii=False)
-
-    @staticmethod
-    def read_result(seed, suffix):
-        """读取预测结果"""
-        filename = '../list/result/split_%d_%s.txt' % (seed, suffix)
-        with open(filename) as f:
-            data_dict = json.load(f, encoding='utf-8')
-        return data_dict
-
+        if scale == True:
+            sc = StandardScaler()   # 初始化一个对象sc去对数据集作变换
+            sc.fit(X_train)   # 用对象去拟合数据集X_train，并且存下来拟合参数
+            X_train_std = sc.transform(X_train)
+            X_test_std = sc.transform(X_test)
+            X_train = X_train_std
+            X_test = X_test_std
+        # print(X_train.shape)
+        info_dict = {
+            'train_index': train_index,
+            'test_index': test_index,
+        }
+        return X_train, X_test, Y_train, Y_test, info_dict
 
 if __name__ == '__main__':
     pass

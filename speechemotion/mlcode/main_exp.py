@@ -38,7 +38,7 @@ def save_exp_log(report_dict, name_str='', float_format='%.4f', output_dir='./lo
             f.write('\n')
         f.write('\n')
 
-def main_experiment(ad_datasets, model, seeds=None):
+def main_experiment(ad_datasets, data_splitter, model, seeds=None):
     """ 实验主过程: 多次调用pipelineCV之后取平均
     seeds 默认为 list(range(2008, 2018)), seeds的长度决定十折的次数，必须跟划分数据时所用的一致
     """
@@ -53,7 +53,7 @@ def main_experiment(ad_datasets, model, seeds=None):
     # 用来记录每次十折的平均结果
     cv_metrics_stat = pd.DataFrame(columns=['train_acc', 'test_acc','train_precision', 'train_recall', 'train_f1score',
                                           'test_precision', 'test_recall', 'test_f1score'], dtype=float)
-    pipelineCV = PipelineCV(model, ad_datasets)
+    pipelineCV = PipelineCV(model, ad_datasets, data_splitter)
     for indx in range(len(seeds)):
         seed = seeds[indx]
         result = pipelineCV.run_pipeline(seed)
