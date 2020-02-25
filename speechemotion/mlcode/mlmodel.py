@@ -32,8 +32,8 @@ class MLModel(Model):
         try:
             self.model = pickle.load(open(to_load, "rb"))
         except:
-            sys.stderr.write("Invalid saved file provided")
-            sys.exit(-1)
+            raise Exception("Invalid saved file provided")
+
 
     def fit(self, x_train, y_train, validation_data=None):
         self.model.fit(x_train, y_train)
@@ -41,9 +41,8 @@ class MLModel(Model):
 
     def predict(self, samples):
         if not self.trained:
-            sys.stderr.write(
-                "Model should be trained or loaded before doing predict\n")
-            sys.exit(-1)
+            raise Exception("Model should be trained or loaded before doing predict\n")
+
         return self.model.predict(samples)
 
 

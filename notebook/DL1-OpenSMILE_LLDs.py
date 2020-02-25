@@ -4,8 +4,8 @@
 # In[ ]:
 
 
-get_ipython().run_line_magic('matplotlib', 'notebook')
-# %matplotlib inline
+get_ipython().run_line_magic('matplotlib', 'inline')
+# %matplotlib notebook
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # ggplot  seaborn-poster
 # basic handling
@@ -26,6 +26,8 @@ get_ipython().run_line_magic('autoreload', '2')
 print(os.getcwd())
 
 
+# # Prepare
+
 # In[ ]:
 
 
@@ -43,86 +45,50 @@ proj_root_path = '../'
 
 csv_label_path = proj_root_path + 'data/emodb/datalist.csv'
 
-# ['acoustic_CPE16.csv', 'acoustic_CPE16_lsa.csv',
-# 'acoustic_IS09.csv',  'acoustic_IS09_lsa.csv',
-# 'acoustic_IS10.csv',  'acoustic_IS10_lsa.csv',
-# 'acoustic_IS11.csv',  'acoustic_IS11_lsa.csv', 
-# 'acoustic_IS12.csv', , 'acoustic_IS12_lsa.csv',
-# 'acoustic_egemaps.csv',  'acoustic_egemaps_lsa.csv',
-# ]
-
-feature_choose = 'CPE16'
-acoustic_fp = proj_root_path + 'fusion/acoustic_%s.csv' % feature_choose
-
-list_dir = proj_root_path + 'list'
-
-# 合并不同的特征集
-allfeature_out_fp = proj_root_path + 'fusion/tmp_merged.csv'
-
-merge_all([csv_label_path, acoustic_fp], allfeature_out_fp,
-         [None, feature_choose+'_'])
-
-
-# In[ ]:
-
-
-from speechemotion.mlcode.data_manager import DataSets
+from speechemotion.mlcode.data_manager import MLDataSet
 
 CLASS_COL_NAME = 'emotion_en'
 CLASS_NAMES=("neutral", "angry", "happy", "sad", "afraid", "boring", "disgust")
 
 file_path = '../fusion/tmp_merged.csv'
-ser_datasets = DataSets(file_path)
-
-# ad_datasets.df = ad_datasets.drop_nan_row(ad_datasets.df, 'mmse')
-
-
-# In[ ]:
-
-
+FE_file_path = '../fusion/temp_data_after_FE.csv'
+ser_datasets = MLDataSet(file_path)
 ser_datasets.feature_engineering(class_col_name=CLASS_COL_NAME, class_namelist=CLASS_NAMES, drop_cols=None)
-
-ser_datasets.feature_filter(feature_regex='^%s_*' % feature_choose)
-
+ser_datasets.feature_filter(feature_regex='^%s_*' % 'CPE16')
+ser_datasets.write_tmp_df(FE_file_path)
 print()
 ser_datasets.df.iloc[:, 0:16].describe()
 
-
-# #
 
 # In[ ]:
 
 
 import os
-from speechemotion.mlcode.data_manager import DataLoader
+from speechemotion.mlcode.data_splitter import KFoldSplitter
+data_splitter = KFoldSplitter()
 
 
-# # 
+# In[ ]:
+
+
+
+
+
+# # Deep Learning Dataset
 
 # In[ ]:
 
 
 get_ipython().system('ls ../data/emodb/')
+get_ipython().system('ls ../fusion/')
 
 
 # In[ ]:
 
 
-from speechemotion.dlcode.dl_data_manager import DLDataSets
-
-
-# In[ ]:
-
-
-_, Y = ser_datasets.get_XY()
-Y
-
-
-# In[ ]:
-
-
+from speechemotion.dlcode.dl_data_manager import DLDataSet
 DL_FILE_PATH = '../data/emodb/acoustic_egemaps.hdf5'
-dl_dataset = DLDataSets(Y, DL_FILE_PATH, ser_datasets.class_num)
+dl_dataset = DLDataSet(DL_FILE_PATH, FE_file_path,len(CLASS_NAMES))
 
 
 # In[ ]:
@@ -136,6 +102,8 @@ dl_dataset.get_input_shape()
 
 shape_stat = dl_dataset.describe_data()
 
+
+# # 
 
 # In[ ]:
 
@@ -159,14 +127,26 @@ def length_of_sentences(shape_stat):
 #         for indx in range(shape_stat.shape[0]):
 #             if shape_stat[indx, 0] >= 3000:
 #                 print(list(feat_clps.keys())[indx], end=' ')
-        
+     
 length_of_sentences(shape_stat)
 
 
 # In[ ]:
 
 
-X_train, X_test, Y_train, Y_test, info_dict = dl_dataset.get_data_scaled(1998, 2, normlize=True)
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+X_train, X_test, Y_train, Y_test, info_dict = dl_dataset.get_data_scaled(1998, 2, normlize=True, data_splitter=data_splitter)
 # 计算方差和均值不会消耗太多内存，载入数据集X到内存约花费14G空间
 print('->  X shape:', X_train.shape, X_test.shape)
 print('->  Y shape:', Y_train.shape, Y_test.shape)
@@ -199,8 +179,16 @@ print ('x_i mean:', x_i.mean(axis=0))
 # In[ ]:
 
 
+
+
+
+# In[ ]:
+
+
 del X_train, X_test
 
+
+# # DeepLearning Models
 
 # In[ ]:
 
@@ -214,7 +202,7 @@ print(keras.__version__)
 
 
 # 没有问题的话就开始搭建模型
-from speechemotion.dlcode.nn_model import NN_MODEL, model_factory
+from speechemotion.dlcode.nn_model import KerasModelAdapter
 import functools
 
 UTT_LENGTH = 500
@@ -236,13 +224,13 @@ def model_creator(input_shape):
     model = Sequential()
     # default "image_data_format": "channels_last"
 
-    model.add(Convolution1D(128, 3, strides=2, input_shape=input_shape))
+    model.add(Convolution1D(64, 3, strides=1, input_shape=input_shape))
     model.add(Activation('relu'))
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.5))
 
-    for filter_num in [128, 128]:
-        model.add(Convolution1D(filter_num, 3, strides=2, padding='same'))
+    for filter_num in [64, 128]:
+        model.add(Convolution1D(filter_num, 3, strides=1, padding='same'))
         model.add(Activation('relu'))
         model.add(MaxPooling1D(2))
         model.add(Dropout(0.5))
@@ -252,7 +240,7 @@ def model_creator(input_shape):
     return model
 
 
-model = NN_MODEL(dl_dataset.get_input_shape(), model_creator=model_creator)
+model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=model_creator)
 print(model)
 # visualize model layout with pydot_ng
 model.plot_model()
@@ -263,20 +251,36 @@ model.plot_model()
 
 from speechemotion.mlcode.pipelineCV import PipelineCV
 
-pipelineCV = PipelineCV(model, dl_dataset, n_splits=10)
+pipelineCV = PipelineCV(model, dl_dataset, data_splitter, n_splits=10)
 
 
 # In[ ]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
+
 result = pipelineCV.run_pipeline(2000)
 
 
 # In[ ]:
 
 
+from speechemotion.mlcode.main_exp import gen_report, save_exp_log
+print(result['conf_mx'])
+gen_report(result['fold_metrics'])
 
+
+# In[ ]:
+
+
+save_exp_log({
+    'Memo': '|'.join(CLASS_NAMES),
+    'Data': 'File: %s, Shape:%s\n' % (DL_FILE_PATH)
+    'Model': '\n%s\n' % str(model),
+    'Report': gen_report(result['fold_metrics']),
+    'Confusion Matrix': '\n%s\n' % repr(result['conf_mx_sum']),
+    'CV_result_detail': result['cv_metrics_stat'].describe()
+}, name_str=feature_choose )
 
 
 # In[ ]:

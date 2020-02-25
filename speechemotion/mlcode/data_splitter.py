@@ -9,7 +9,40 @@ from sklearn.model_selection import KFold, GroupKFold, StratifiedKFold
 _DEFAULT_SPLIT_FILE_HOME_ = os.path.join(os.path.dirname(__file__), '../../list/split/')
 _DEFAULT_RESULT_FILE_HOME_ = os.path.join(os.path.dirname(__file__), '../../list/result/')
 
-class KFoldSplitter(object):
+
+class DataSplitter(object):
+    """抽象基类, 用于确定接口"""
+
+    def split(self, df, seeds):
+        """对df做数据划分，生成分割文件"""
+        raise NotImplementedError
+
+    def read_split_file(self, seed, ith):
+        """ 指定种子和折编号，读取已保存的划分文件 """
+        raise NotImplementedError
+
+    def save_result(self, data_dict, seed, suffix):
+        """保存预测结果"""
+        raise NotImplementedError
+
+    def read_result(self, seed, suffix):
+        """读取预测结果"""
+        raise NotImplementedError
+
+    @staticmethod
+    def array2CSstr(result_array):
+        """convert result 1-d array to comma separated string"""
+        result_list = [str(val) for val in list(result_array)]
+        return ','.join(result_list)
+
+    @staticmethod
+    def CSstr2array(result_str):
+        """convert comma separated string to 1-d array"""
+        result_list = result_str.split(',')
+        return np.array([float(val) for val in result_list])
+
+
+class KFoldSplitter(DataSplitter):
     """处理关于划分数据集的类"""
     def __init__(self, n_splits=10, label_name='label', split_file_dir=None, result_file_dir=None):
         self.n_splits = n_splits
@@ -108,15 +141,5 @@ class KFoldSplitter(object):
             data_dict = json.load(f, encoding='utf-8')
         return data_dict
 
-    @staticmethod
-    def array2CSstr(result_array):
-        """convert result 1-d array to comma separated string"""
-        result_list = [str(val) for val in list(result_array)]
-        return ','.join(result_list)
 
-    @staticmethod
-    def CSstr2array(result_str):
-        """convert comma separated string to 1-d array"""
-        result_list = result_str.split(',')
-        return np.array([float(val) for val in result_list])
 

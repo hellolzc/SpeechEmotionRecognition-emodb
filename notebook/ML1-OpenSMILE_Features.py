@@ -56,13 +56,13 @@ merge_all([csv_label_path, acoustic_fp], allfeature_out_fp,
 # In[ ]:
 
 
-from speechemotion.mlcode.data_manager import DataSets
+from speechemotion.mlcode.data_manager import MLDataSet
 
 CLASS_COL_NAME = 'emotion_en'
 CLASS_NAMES=("neutral", "angry", "happy", "sad", "afraid", "boring", "disgust")
 
 file_path = '../fusion/tmp_merged.csv'
-ser_datasets = DataSets(file_path)
+ser_datasets = MLDataSet(file_path)
 
 
 # In[ ]:
@@ -83,7 +83,7 @@ ser_datasets.df.iloc[:, 0:16].describe()
 
 
 import os
-from speechemotion.mlcode.data_manager import DataLoader
+from speechemotion.mlcode.data_splitter import KFoldSplitter
 
 
 # In[ ]:
@@ -91,11 +91,11 @@ from speechemotion.mlcode.data_manager import DataLoader
 
 # 重新划分数据
 # 从这里开始 df里的数据顺序不能改变，否则会对不上号
-data_loader = DataLoader(n_splits=10, label_name='label')  # 
+data_splitter = KFoldSplitter(n_splits=10, label_name='label')  # 
 
 os.system('rm ../list/split/*.json')
 os.system('rm ../list/result/*.json')
-data_loader.split(ser_datasets.df, seeds=list(range(1998, 2018)))
+data_splitter.split(ser_datasets.df, seeds=list(range(1998, 2018)))
 
 
 # # Train & Test
@@ -122,6 +122,7 @@ from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
 
 # from speechemotion.mlcode.roc import auc_classif
 from speechemotion.mlcode.main_exp import main_experiment
+from speechemotion.mlcode.mlmodel import SKLearnModelAdapter
 
 
 # In[ ]:
@@ -158,9 +159,9 @@ svc_model =sklearn.svm.SVC()
 
 model_list = {
 #     'svm1':sklearn.svm.SVC(kernel='rbf', gamma=1e-4, C=10),
-    'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
-#     'svm1':GridSearchCV(svc_model, tuned_parameters[0], scoring='recall_macro', cv=4, n_jobs=10),
-#     'svm2':GridSearchCV(svc_model, tuned_parameters[1], scoring='recall_macro', cv=4, n_jobs=10),
+#     'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
+    'svm1':GridSearchCV(svc_model, tuned_parameters[0], scoring='recall_macro', cv=4, n_jobs=20),
+    'svm2':GridSearchCV(svc_model, tuned_parameters[1], scoring='recall_macro', cv=4, n_jobs=20),
 #     'lr1':linear_model.LogisticRegressionCV(Cs=[0.01, 0.1, 1], penalty='l1', solver='liblinear', cv=4),
 #     'rf1':RandomForestClassifier(n_estimators=50, max_leaf_nodes=5)
 }
@@ -192,10 +193,12 @@ get_ipython().system('mkdir -p log')
 # In[ ]:
 
 
+
 from speechemotion.mlcode.main_exp import save_exp_log
 for key  in model_list:
     model = model_list[key]
-    result = main_experiment(ser_datasets, model)
+    adapter = SKLearnModelAdapter(model)
+    result = main_experiment(ser_datasets, data_splitter, adapter)
 
     conf_mx = result['conf_mx_sum']
     report = result['report']
@@ -222,20 +225,17 @@ for key  in model_list:
 
 
 # ## Plot learning curve
-from speechemotion.mlcode.pipelineCV import PipelineCV
-
 #     'svm1':sklearn.svm.SVC(kernel='rbf', gamma=1e-4, C=10),
 #     'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
 # model = linear_model.LogisticRegression(C=0.1, penalty='l1')
 model = sklearn.svm.SVC(kernel='rbf', gamma=1e-4, C=10)
 import warnings
 warnings.filterwarnings("ignore", message="The default value of cv will change from 3 to 5 in version 0.22.")
-print(feature_group)
-X, Y = ser_datasets.get_XY(feature_regex=feature_group) # , return_matrix=True
+
+X, Y = ser_datasets.get_XY()
 print(X.columns)
 # randomforest和logisticRegression已知对变量数量级和变化范围不敏感
-
-X_train, X_test, Y_train, Y_test = PipelineCV.get_data_scaled(X, Y, 2000, 3)
+X_train, X_test, Y_train, Y_test, _ = ser_datasets.get_data_scaled(2000, 3, data_splitter=data_splitter)
 print(model)
 print(X.shape)  # _train
 plot_learning_curve(model, "Learning Curve", X_train, Y_train, train_sizes=np.linspace(0.2, 1.0, 5), ylim=(0.5,1.0))

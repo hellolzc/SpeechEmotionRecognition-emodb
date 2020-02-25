@@ -10,11 +10,12 @@ from sklearn.metrics import confusion_matrix
 from speechemotion.mlcode.model_base_class import Model
 from speechemotion.mlcode.helper_functions import accuracy, precision_recall_f1score
 from speechemotion.mlcode.data_manager import DataSet
-from speechemotion.mlcode.data_splitter import KFoldSplitter
+from speechemotion.mlcode.data_splitter import DataSplitter
 
 
 class PipelineCV():
-    def __init__(self, model_base : Model, dataset : DataSet, data_splitter, n_splits=10, exp_name='untitled'):
+    def __init__(self, model_base : Model, dataset : DataSet, data_splitter : DataSplitter,
+                 n_splits=10, exp_name='untitled'):
         self.model_base = model_base  # Model
         self.n_splits = n_splits
         self.exp_name = exp_name
@@ -51,10 +52,10 @@ class PipelineCV():
     def log_result(self, train_pred, train_true, test_pred, test_true, model : Model =None):
         """save result for future analysising"""
         fold_i_result = {
-            'train_pred': KFoldSplitter.array2CSstr(train_pred),
-            'train_true': KFoldSplitter.array2CSstr(train_true),
-            'test_pred': KFoldSplitter.array2CSstr(test_pred),
-            'test_true': KFoldSplitter.array2CSstr(test_true),
+            'train_pred': DataSplitter.array2CSstr(train_pred),
+            'train_true': DataSplitter.array2CSstr(train_true),
+            'test_pred': DataSplitter.array2CSstr(test_pred),
+            'test_true': DataSplitter.array2CSstr(test_true),
         }
         # 记录模型参数
         model_params = model.log_parameters()
