@@ -4,8 +4,8 @@
 # In[ ]:
 
 
-get_ipython().run_line_magic('matplotlib', 'inline')
-# %matplotlib notebook
+# %matplotlib inline
+get_ipython().run_line_magic('matplotlib', 'notebook')
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # ggplot  seaborn-poster
 # basic handling
@@ -87,7 +87,7 @@ get_ipython().system('ls ../fusion/')
 
 
 from speechemotion.dlcode.dl_data_manager import DLDataSet
-DL_FILE_PATH = '../data/emodb/acoustic_egemaps.hdf5'
+DL_FILE_PATH = '../data/emodb/acoustic_emnet.hdf5'
 dl_dataset = DLDataSet(DL_FILE_PATH, FE_file_path,len(CLASS_NAMES))
 
 
@@ -140,12 +140,6 @@ length_of_sentences(shape_stat)
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
 X_train, X_test, Y_train, Y_test, info_dict = dl_dataset.get_data_scaled(1998, 2, normlize=True, data_splitter=data_splitter)
 # 计算方差和均值不会消耗太多内存，载入数据集X到内存约花费14G空间
 print('->  X shape:', X_train.shape, X_test.shape)
@@ -179,6 +173,14 @@ print ('x_i mean:', x_i.mean(axis=0))
 # In[ ]:
 
 
+# x_i_x = np.linspace(0, len(x_i)/100.0, num=len(x_i))
+# plt.plot(x_i_x, x_i[:, 0], x_i_x, x_i[:, 28]+5)
+# plt.show()
+
+
+# In[ ]:
+
+
 
 
 
@@ -194,7 +196,7 @@ del X_train, X_test
 
 
 import keras
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2,3"
 print(keras.__version__)
 
 
@@ -205,9 +207,16 @@ print(keras.__version__)
 from speechemotion.dlcode.nn_model import KerasModelAdapter
 import functools
 
-UTT_LENGTH = 500
+UTT_LENGTH = 512
 # dl_dataset.describe_data()
 dl_dataset.set_data_length(UTT_LENGTH)
+print(dl_dataset.get_input_shape())
+
+
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization, Reshape
+from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D
+from keras.layers import CuDNNLSTM as LSTM
 
 
 # In[ ]:
@@ -215,32 +224,96 @@ dl_dataset.set_data_length(UTT_LENGTH)
 
 # model_creator = functools.partial(model_factory, model_choose='cnn_1')
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization
-from keras.layers import Convolution2D, MaxPooling2D
-from keras.layers import Convolution1D, MaxPooling1D
+# def model_creator(input_shape):
+#     model = Sequential()
+#     # default "image_data_format": "channels_last"
 
-def model_creator(input_shape):
+#     model.add(Conv1D(64, 3, strides=1, input_shape=input_shape))
+#     model.add(Activation('relu'))
+#     model.add(MaxPooling1D(2))
+#     model.add(Dropout(0.5))
+
+#     for filter_num in [64, 128]:
+#         model.add(Conv1D(filter_num, 3, strides=1, padding='same'))
+#         model.add(Activation('relu'))
+#         model.add(MaxPooling1D(2))
+#         model.add(Dropout(0.5))
+
+#     model.add(Flatten())
+#     model.add(Dense(7, activation='softmax'))
+#     return model
+
+# def model_creator2(input_shape):
+#     model = Sequential()
+#     # default "image_data_format": "channels_last"
+#     # assert K.image_data_format() == 'channels_last':
+
+#     model.add(Reshape((*input_shape, 1), input_shape=input_shape))
+#     model.add(Conv2D(64, (6,1), strides=1))
+#     model.add(Activation('relu'))
+#     model.add(MaxPooling2D(pool_size=(4, 1)))
+#     model.add(Dropout(0.5))
+#     model.add(Reshape((-1,64*input_shape[1])))
+
+#     for filter_num in [64, 128]:
+#         model.add(Conv1D(filter_num, 3, strides=1, padding='same'))
+#         model.add(Activation('relu'))
+#         model.add(MaxPooling1D(2))
+#         model.add(Dropout(0.5))
+
+#     model.add(Flatten())
+#     model.add(Dense(7, activation='softmax'))
+#     return model
+
+
+def model_creator3(input_shape):
     model = Sequential()
     # default "image_data_format": "channels_last"
+    # assert K.image_data_format() == 'channels_last':
 
-    model.add(Convolution1D(64, 3, strides=1, input_shape=input_shape))
+    model.add(Reshape((*input_shape, 1), input_shape=input_shape))
+    model.add(Conv2D(64, (6,1), strides=1))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(4, 1)))
+    model.add(Dropout(0.5))
+    model.add(Reshape((-1,64*input_shape[1])))
+
+
+    model.add(Conv1D(128, 3, strides=1, padding='same'))
     model.add(Activation('relu'))
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.5))
 
-    for filter_num in [64, 128]:
-        model.add(Convolution1D(filter_num, 3, strides=1, padding='same'))
-        model.add(Activation('relu'))
-        model.add(MaxPooling1D(2))
-        model.add(Dropout(0.5))
+    model.add(LSTM(48, return_sequences=True))  # returns a sequence of vectors
+    model.add(Dropout(0.5))
+    model.add(LSTM(48))  # return a single vector
+    
+def EmNet_creator(input_shape):
+    model = Sequential()
+    # default "image_data_format": "channels_last"
+    # assert K.image_data_format() == 'channels_last':
 
-    model.add(Flatten())
+    model.add(Reshape((*input_shape, 1), input_shape=input_shape))
+    model.add(Conv2D(64, (6,1), strides=1, padding='same'))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(4, 1)))
+
+    model.add(Reshape((-1,64*input_shape[1])))
+    model.add(Conv1D(128, 2, strides=1, padding='same'))
+    model.add(Activation('relu'))
+    model.add(MaxPooling1D(2))
+
+    model.add(Dropout(0.5))
+    model.add(LSTM(48, return_sequences=True))  # returns a sequence of vectors  , dropout=0.25
+    model.add(Dropout(0.5))
+    model.add(LSTM(48))  # return a single vector  , dropout=0.25
+    
+#     model.add(Flatten())
     model.add(Dense(7, activation='softmax'))
     return model
 
 
-model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=model_creator)
+model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=EmNet_creator)
 print(model)
 # visualize model layout with pydot_ng
 model.plot_model()
@@ -275,18 +348,24 @@ gen_report(result['fold_metrics'])
 
 save_exp_log({
     'Memo': '|'.join(CLASS_NAMES),
-    'Data': 'File: %s, Shape:%s\n' % (DL_FILE_PATH)
+    'Data': 'File: %s\n' % (DL_FILE_PATH),
     'Model': '\n%s\n' % str(model),
     'Report': gen_report(result['fold_metrics']),
-    'Confusion Matrix': '\n%s\n' % repr(result['conf_mx_sum']),
-    'CV_result_detail': result['cv_metrics_stat'].describe()
-}, name_str=feature_choose )
+    'Confusion Matrix': '\n%s\n' % repr(result['conf_mx']),
+    'CV_result_detail': result['fold_metrics'].describe()
+}, name_str='DeepLearning' )
 
 
 # In[ ]:
 
 
 
+
+
+# In[ ]:
+
+
+exit(0)
 
 
 # In[ ]:

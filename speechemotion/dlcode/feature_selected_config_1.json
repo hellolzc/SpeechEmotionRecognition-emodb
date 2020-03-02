@@ -1,0 +1,23 @@
+{
+    "name":"For_EmNet",
+    "project_root":"../../",
+    "output_fp":"data/emodb/acoustic_emnet.hdf5",
+    "input":[
+        {
+            "name":"egemaps",
+            "prefix":null,
+            "dir":"opensmile/audio_features_egemaps_/",
+            "selected":"Loudness_sma3,alphaRatio_sma3,hammarbergIndex_sma3,slope0-500_sma3,slope500-1500_sma3,F0semitoneFrom27.5Hz_sma3nz,jitterLocal_sma3nz,shimmerLocaldB_sma3nz,HNRdBACF_sma3nz,logRelF0-H1-H2_sma3nz,logRelF0-H1-A3_sma3nz,F1frequency_sma3nz,F1bandwidth_sma3nz,F1amplitudeLogRelF0_sma3nz,F2frequency_sma3nz,F2amplitudeLogRelF0_sma3nz,F3frequency_sma3nz,F3amplitudeLogRelF0_sma3nz",
+            "?droped":"mfcc1_sma3,mfcc2_sma3,mfcc3_sma3,mfcc4_sma3,spectralFlux_sma3"
+        },
+        {
+            "name":"ComParE",
+            "prefix":null,
+            "dir":"opensmile/audio_features_CPE16_/",
+            "selected":"mfcc_sma[1],mfcc_sma[2],mfcc_sma[3],mfcc_sma[4],mfcc_sma[5],pcm_zcr_sma,pcm_fftMag_spectralCentroid_sma,pcm_fftMag_spectralEntropy_sma,pcm_fftMag_spectralFlux_sma,pcm_fftMag_spectralRollOff25.0_sma,pcm_fftMag_spectralRollOff50.0_sma,pcm_fftMag_spectralRollOff75.0_sma,pcm_fftMag_spectralRollOff90.0_sma,voicingFinalUnclipped_sma"
+        }
+    ],
+    "?comment":"comment line"
+}
+
+

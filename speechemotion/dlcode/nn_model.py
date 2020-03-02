@@ -45,6 +45,7 @@ def generate_arrays_from_data(X_train, Y_train, sample_size):
 class KerasModelAdapter(Model):
     """将keras模型装饰一下，从而将所有的模型设置集中到一处"""
     def __init__(self, input_shape=None, model_creator=None, **params):
+        """model_creator是一个函数，输入为input_shape, 返回一个Keras Model"""
         if 'name' not in params:
             params['name'] = 'KerasModelAdapter'
         super().__init__(params)
@@ -56,7 +57,7 @@ class KerasModelAdapter(Model):
         self.train_history = None
 
     def set_hyper_params(self, lr=0.0001, loss='categorical_crossentropy'):
-        pass
+        raise NotImplementedError
 
 
     def __str__(self):
@@ -93,10 +94,10 @@ class KerasModelAdapter(Model):
 
     def _compile_model(self):
         """fit之前需要先compile"""
-        opt = keras.optimizers.Adam(lr=0.0005)
+        opt = keras.optimizers.Adam(lr=0.001)
         self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
-    def fit(self, X_train, Y_train, validation_data=None, batch_size=32):
+    def fit(self, X_train, Y_train, validation_data=None, batch_size=64):
         """return None"""
         # history = _model.fit(train_x, train_y, epochs=10, batch_size=32, validation_data=(val_x, val_y))
         # return self.model.fit(X_train, Y_train, epochs=20, batch_size=32, validation_data=validation_data)
@@ -111,9 +112,10 @@ class KerasModelAdapter(Model):
         print("Shape:", X_train.shape[0], steps_per_epoch, batch_size)
 
         self._compile_model()
-        self.train_history = self.model.fit_generator(my_generator, epochs=150,
+        self.train_history = self.model.fit_generator(my_generator, epochs=250, verbose=0,
                                     steps_per_epoch=steps_per_epoch,
                                     validation_data=validation_data)
+        self.trained = True
         self.show_history()
 
     def predict(self, X):
