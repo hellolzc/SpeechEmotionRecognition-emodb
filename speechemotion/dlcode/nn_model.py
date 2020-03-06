@@ -46,17 +46,24 @@ class KerasModelAdapter(Model):
     """将keras模型装饰一下，从而将所有的模型设置集中到一处"""
     def __init__(self, input_shape=None, model_creator=None, **params):
         """model_creator是一个函数，输入为input_shape, 返回一个Keras Model"""
+        self.params = params.copy()  # 存档
+        self.lr = params.pop('lr', 0.001)
+        self.epochs = params.pop('epochs', 200)
+        self.verbose = params.pop('verbose', 0)
+
         if 'name' not in params:
             params['name'] = 'KerasModelAdapter'
         super().__init__(params)
-        self.params = params
+
+        K.clear_session()  # 清理掉旧模型
         self.input_shape = input_shape
         self.model_creator = model_creator
         model = model_creator(input_shape)
         self.model = model
         self.train_history = None
 
-    def set_hyper_params(self, lr=0.0001, loss='categorical_crossentropy'):
+    def set_hyper_params(self, **hyper_params):
+        # TODO: finish this method
         raise NotImplementedError
 
 
@@ -85,6 +92,7 @@ class KerasModelAdapter(Model):
 
     def summary(self):
         stringlist = []
+        stringlist.append(str(self.params))
         self.model.summary(print_fn=lambda x: stringlist.append(x), line_length=90)
         short_model_summary = "\n".join(stringlist)
         return short_model_summary
@@ -94,7 +102,7 @@ class KerasModelAdapter(Model):
 
     def _compile_model(self):
         """fit之前需要先compile"""
-        opt = keras.optimizers.Adam(lr=0.001)
+        opt = keras.optimizers.Adam(lr=self.lr)
         self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
     def fit(self, X_train, Y_train, validation_data=None, batch_size=64):
@@ -112,7 +120,8 @@ class KerasModelAdapter(Model):
         print("Shape:", X_train.shape[0], steps_per_epoch, batch_size)
 
         self._compile_model()
-        self.train_history = self.model.fit_generator(my_generator, epochs=250, verbose=0,
+        self.train_history = self.model.fit_generator(my_generator,
+                                    epochs=self.epochs, verbose=self.verbose,
                                     steps_per_epoch=steps_per_epoch,
                                     validation_data=validation_data)
         self.trained = True
@@ -127,8 +136,7 @@ class KerasModelAdapter(Model):
 
     def clone_model(self):
         """reset graph and return a deep copy of this model object"""
-        # 清理内存，才能载入新模型，意味着旧模型报废了
-        K.clear_session()
+        # 载入新模型，会自动清理内存，意味着旧模型报废了
         new_model = KerasModelAdapter(input_shape=self.input_shape, model_creator=self.model_creator, **self.params)
         return new_model
 
