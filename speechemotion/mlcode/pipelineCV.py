@@ -95,7 +95,8 @@ class PipelineCV():
         for ith in range(self.n_splits):
 
             fold_i_result, fold_i_stat = self.one_fold_in_CV(seed, ith)
-            print('Seed: %d, Fold: %d' % (seed, ith), end='\t')
+            timestr = time.strftime('%H:%M:%S', time.localtime(time.time()))
+            print('Seed: %d, Fold: %d, Time: %s' % (seed, ith, timestr), end='\t')
             print('Acc: Train %f, Test %f' % (fold_i_stat['train_accuracy'], fold_i_stat['test_accuracy']))
 
             conf_mx_i = fold_i_stat['conf_mx']

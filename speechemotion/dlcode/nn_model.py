@@ -11,7 +11,8 @@ from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D
 
 from keras.utils import to_categorical
 from keras.utils import plot_model
-from keras.callbacks import LearningRateScheduler
+from keras.utils import multi_gpu_model
+from keras.callbacks import LearningRateScheduler, EarlyStopping
 
 from keras import backend as K
 
@@ -48,12 +49,15 @@ class KerasModelAdapter(Model):
         """model_creator是一个函数，输入为input_shape, 返回一个Keras Model"""
         self.params = params.copy()  # 存档
         self.lr = params.pop('lr', 0.001)
-        self.epochs = params.pop('epochs', 200)
+        self.lr_decay = params.pop('lr_decay', 0.0)
+        self.epochs = params.pop('epochs', 300)
         self.verbose = params.pop('verbose', 0)
+        self.gpus = params.pop('gpus', 1)
+        self.batch_size = params.pop('batch_size', 64 * self.gpus)
 
         if 'name' not in params:
             params['name'] = 'KerasModelAdapter'
-        super().__init__(params)
+        super().__init__(params)  # 用不上的参数传给父类
 
         K.clear_session()  # 清理掉旧模型
         self.input_shape = input_shape
@@ -102,10 +106,12 @@ class KerasModelAdapter(Model):
 
     def _compile_model(self):
         """fit之前需要先compile"""
-        opt = keras.optimizers.Adam(lr=self.lr)
+        if self.gpus > 1:
+            self.model = multi_gpu_model(self.model, self.gpus)
+        opt = keras.optimizers.Adam(lr=self.lr, decay=self.lr_decay)
         self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
-    def fit(self, X_train, Y_train, validation_data=None, batch_size=64):
+    def fit(self, X_train, Y_train, validation_data=None):
         """return None"""
         # history = _model.fit(train_x, train_y, epochs=10, batch_size=32, validation_data=(val_x, val_y))
         # return self.model.fit(X_train, Y_train, epochs=20, batch_size=32, validation_data=validation_data)
@@ -115,15 +121,22 @@ class KerasModelAdapter(Model):
             val_x, val_y = validation_data
             val_y = to_categorical(val_y)
             validation_data = (val_x, val_y)
+        batch_size = self.batch_size
         my_generator = generate_arrays_from_data(X_train, Y_train, batch_size)
         steps_per_epoch = int(np.ceil(X_train.shape[0]/batch_size))
-        print("Shape:", X_train.shape[0], steps_per_epoch, batch_size)
+        print("[INFO @ %s]"%__name__, "SampleNum:", X_train.shape[0], 'Steps & Batchsize:', steps_per_epoch, batch_size)
+        if self.lr_decay != 0.0:
+            new_lr = self.lr * 1 / (1 + self.lr_decay*steps_per_epoch)
+            print("LearningRate will be %f after 1 eopch." % new_lr)
+            new_lr = self.lr * 1 / (1 + self.lr_decay*steps_per_epoch*self.epochs)
+            print("LearningRate will be %f after last eopch." % new_lr)
 
         self._compile_model()
+        # es = EarlyStopping(monitor='val_loss', patience=5)
         self.train_history = self.model.fit_generator(my_generator,
                                     epochs=self.epochs, verbose=self.verbose,
                                     steps_per_epoch=steps_per_epoch,
-                                    validation_data=validation_data)
+                                    validation_data=validation_data)  # callbacks=[es]
         self.trained = True
         self.show_history()
 
@@ -149,7 +162,7 @@ class KerasModelAdapter(Model):
         ax = plt.subplot(121)
         plt.plot(history.history['acc'])
         plt.plot(history.history['val_acc'])
-        ax.set_ylim([0.1, 1.0])
+        ax.set_ylim([0.2, 1.0])
         plt.title('model accuracy')
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
@@ -158,7 +171,7 @@ class KerasModelAdapter(Model):
         ax = plt.subplot(122)
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
-        # ax.set_ylim([0.0, 0.9])
+        ax.set_ylim([0.0, 3.0])
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')

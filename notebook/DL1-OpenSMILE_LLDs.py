@@ -4,8 +4,8 @@
 # In[ ]:
 
 
-# %matplotlib inline
-get_ipython().run_line_magic('matplotlib', 'notebook')
+get_ipython().run_line_magic('matplotlib', 'inline')
+# %matplotlib notebook
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # ggplot  seaborn-poster
 # basic handling
@@ -196,7 +196,7 @@ del X_train, X_test
 
 
 import keras
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 print(keras.__version__)
 
 
@@ -215,8 +215,14 @@ print(dl_dataset.get_input_shape())
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization, Reshape
-from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D
+from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D, LeakyReLU
+# from keras.layers import LSTM
 from keras.layers import CuDNNLSTM as LSTM
+from keras.layers import CuDNNGRU as GRU
+from keras.layers import Bidirectional
+
+
+from keras.regularizers import l1, l2
 
 
 # In[ ]:
@@ -272,21 +278,22 @@ def model_creator3(input_shape):
     # assert K.image_data_format() == 'channels_last':
 
     model.add(Reshape((*input_shape, 1), input_shape=input_shape))
-    model.add(Conv2D(64, (6,1), strides=1))
-    model.add(Activation('relu'))
+    model.add(Conv2D(8, (6,1), strides=1, padding='same', activation='relu'))
     model.add(MaxPooling2D(pool_size=(4, 1)))
     model.add(Dropout(0.5))
-    model.add(Reshape((-1,64*input_shape[1])))
+#     model.add(Conv2D(8, (6,1), strides=1, padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(4, 1)))
+#     model.add(Dropout(0.5))
+    model.add(Reshape((-1,8*input_shape[1])))
 
 
-    model.add(Conv1D(128, 3, strides=1, padding='same'))
-    model.add(Activation('relu'))
+    model.add(Conv1D(64, 3, strides=1, padding='same', activation='relu'))
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.5))
 
-    model.add(LSTM(48, return_sequences=True))  # returns a sequence of vectors
-    model.add(Dropout(0.5))
-    model.add(LSTM(48))  # return a single vector
+    model.add(Flatten())
+    model.add(Dense(7, activation='softmax'))
+    return model
     
 def EmNet_creator(input_shape):
     model = Sequential()
@@ -294,26 +301,34 @@ def EmNet_creator(input_shape):
     # assert K.image_data_format() == 'channels_last':
 
     model.add(Reshape((*input_shape, 1), input_shape=input_shape))
-    model.add(Conv2D(64, (6,1), strides=1, padding='same'))
+    model.add(Conv2D(64, (6,1), strides=1, padding='same'))  # , kernel_regularizer=l1(0.001)
     model.add(Activation('relu'))
+#     model.add(LeakyReLU())
     model.add(MaxPooling2D(pool_size=(4, 1)))
 
     model.add(Reshape((-1,64*input_shape[1])))
-    model.add(Conv1D(128, 2, strides=1, padding='same'))
+    model.add(Conv1D(128, 3, strides=1, padding='same', kernel_regularizer=l1(0.00001)))  # , kernel_regularizer=l1(0.00001)
     model.add(Activation('relu'))
+#     model.add(LeakyReLU())
     model.add(MaxPooling1D(2))
 
+    model.add(BatchNormalization())
     model.add(Dropout(0.5))
-    model.add(LSTM(48, return_sequences=True))  # returns a sequence of vectors  , dropout=0.25
-    model.add(Dropout(0.5))
-    model.add(LSTM(48))  # return a single vector  , dropout=0.25
+    model.add(Bidirectional(LSTM(48, return_sequences=True), merge_mode='concat'))  # returns a sequence of vectors  , dropout=0.25
+    model.add(Dropout(0.5))  # Attention
+    model.add(Bidirectional(LSTM(48), merge_mode='concat'))  # return a single vector  , dropout=0.25
     
 #     model.add(Flatten())
     model.add(Dense(7, activation='softmax'))
     return model
 
-
-model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=EmNet_creator)
+hyper_params = {
+    'lr':0.001,
+    'epochs':150,
+    'lr_decay':0.01
+#     'gpus':2
+}
+model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=EmNet_creator, **hyper_params)
 print(model)
 # visualize model layout with pydot_ng
 model.plot_model()
@@ -322,9 +337,13 @@ model.plot_model()
 # In[ ]:
 
 
-from speechemotion.mlcode.pipelineCV import PipelineCV
+# from speechemotion.mlcode.pipelineCV import PipelineCV
 
-pipelineCV = PipelineCV(model, dl_dataset, data_splitter, n_splits=10)
+# pipelineCV = PipelineCV(model, dl_dataset, data_splitter, n_splits=10)
+# result = pipelineCV.run_pipeline(2000)
+# from speechemotion.mlcode.main_exp import gen_report, save_exp_log
+# print(result['conf_mx'])
+# gen_report(result['fold_metrics'])
 
 
 # In[ ]:
@@ -332,27 +351,35 @@ pipelineCV = PipelineCV(model, dl_dataset, data_splitter, n_splits=10)
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
-result = pipelineCV.run_pipeline(2000)
+from speechemotion.mlcode.main_exp import main_experiment
+
+result = main_experiment(dl_dataset, data_splitter, model)
+
+conf_mx = result['conf_mx_sum']
+report = result['report']
+
+
+# result_df_stat # .describe()
+# UAR
+display(report)
 
 
 # In[ ]:
 
 
-from speechemotion.mlcode.main_exp import gen_report, save_exp_log
-print(result['conf_mx'])
-gen_report(result['fold_metrics'])
+from speechemotion.mlcode.main_exp import save_exp_log, gen_report
+plt.style.use('ggplot')
 
-
-# In[ ]:
-
+# show_confusion_matrix(conf_mx, save_pic_path='./log/cconf_mx.png')
+plot_confusion_matrix(conf_mx, classes=CLASS_NAMES, figsize=(7,7))
 
 save_exp_log({
     'Memo': '|'.join(CLASS_NAMES),
     'Data': 'File: %s\n' % (DL_FILE_PATH),
     'Model': '\n%s\n' % str(model),
-    'Report': gen_report(result['fold_metrics']),
-    'Confusion Matrix': '\n%s\n' % repr(result['conf_mx']),
-    'CV_result_detail': result['fold_metrics'].describe()
+    'Report': report, # gen_report(result['fold_metrics']),
+    'Confusion Matrix': '\n%s\n' % repr(result['conf_mx_sum']),
+    'CV_result_detail': result['cv_metrics_stat'].describe()  # fold_metrics
 }, name_str='DeepLearning' )
 
 

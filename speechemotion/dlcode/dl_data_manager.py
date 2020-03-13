@@ -64,7 +64,7 @@ class DLDataSet(DataSet):
                 firstkey = key
                 break
             firstdata_shape = feat_clps[firstkey].shape # np.array(feat_clps[firstkey]).shape
-            print('First data shape:', firstdata_shape)
+            print('First data shape:', firstdata_shape, end='\t')
 
         data_shape = list(firstdata_shape)
         if self.data_length is None:

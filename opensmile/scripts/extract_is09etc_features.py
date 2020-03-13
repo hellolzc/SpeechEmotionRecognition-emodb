@@ -20,7 +20,7 @@ config_filenames = {
 
 def extract_one_audio(infilename, outfilename, instname, out_summary, config_fp):
     ''' 提取特征统计量
-    Parameters: infilename：音频文件名
+    Parameters: infilename：音频文件名, 绝对路径
                 instname：实例名，一般是音频名(不含格式后缀)
                 out_summary：存放统计量的文件名
     Return: None
@@ -48,12 +48,13 @@ def main(feature_type, audio_path, name_suffix):
     # 删除之前的文件
     if os.path.exists(out_summary):
         os.remove(out_summary)
+    audio_path = os.path.abspath(audio_path)  # 转换成绝对路径, 避免OpenSMILE工具找不到
     audio_list=os.listdir(audio_path)
     audio_list.sort()
 
     for audio in audio_list:
         if audio[-4:]=='.wav':
-            this_path_input=os.path.join(audio_path,audio)
+            this_path_input=os.path.join(audio_path, audio)
             instname = audio[:-4]
             this_path_output=os.path.join(output_path, instname+'.csv')
             extract_one_audio(this_path_input, this_path_output, instname, out_summary, config_fp)
@@ -69,7 +70,7 @@ if __name__ == '__main__':
                         type=str)
     parser.add_argument(
         '-i', '--audio_path',
-        default='/home/zhaoci/Emotion/emodb/data/wav/',
+        default='../../data/emodb/wav/',
         type=str,
         help='dir path of input audio'
     )

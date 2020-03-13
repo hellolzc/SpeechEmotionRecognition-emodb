@@ -172,7 +172,8 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 def plot_confusion_matrix(cm, classes=None,
                           normalize=True,
                           title=None,
-                          cmap=plt.cm.Reds):
+                          cmap=plt.cm.Reds,
+                          figsize=(4, 4)):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -200,9 +201,10 @@ def plot_confusion_matrix(cm, classes=None,
         cm_2 = cm_norm
     # print(cm)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsize)
+    plt.grid(None)
     im = ax.imshow(cm_1, interpolation='nearest', cmap=cmap)
-    ax.figure.colorbar(im, ax=ax)
+    ax.figure.colorbar(im, ax=ax, shrink=0.8)
     # We want to show all ticks...
     ax.set(xticks=np.arange(cm_1.shape[1]),
            yticks=np.arange(cm_1.shape[0]),
@@ -228,9 +230,10 @@ def plot_confusion_matrix(cm, classes=None,
     return ax
 
 
-def show_confusion_matrix(confmat, save_pic_path=None):
+def show_confusion_matrix(confmat, save_pic_path=None, figsize=(4, 4)):
     '''my simple version of '''
-    fig, ax = plt.subplots(figsize=(3, 3))
+    _, ax = plt.subplots(figsize=figsize)
+    plt.grid(None)
     ax.matshow(confmat, cmap=plt.cm.Reds, alpha=0.4)
     for i in range(confmat.shape[0]):
         for j in range(confmat.shape[1]):
