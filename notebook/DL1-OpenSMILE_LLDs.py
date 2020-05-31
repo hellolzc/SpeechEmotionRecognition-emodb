@@ -196,7 +196,7 @@ del X_train, X_test
 
 
 import keras
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 print(keras.__version__)
 
 
@@ -214,8 +214,9 @@ print(dl_dataset.get_input_shape())
 
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization, Reshape
-from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D, LeakyReLU
+from keras.layers import Input, Concatenate, Flatten, Reshape
+from keras.layers import Dense, Dropout, Activation, BatchNormalization, GaussianNoise
+from keras.layers import Conv2D, MaxPooling2D, Conv1D, MaxPooling1D, LeakyReLU, AveragePooling1D
 # from keras.layers import LSTM
 from keras.layers import CuDNNLSTM as LSTM
 from keras.layers import CuDNNGRU as GRU
@@ -301,13 +302,14 @@ def EmNet_creator(input_shape):
     # assert K.image_data_format() == 'channels_last':
 
     model.add(Reshape((*input_shape, 1), input_shape=input_shape))
+    model.add(GaussianNoise(0.05))
     model.add(Conv2D(64, (6,1), strides=1, padding='same'))  # , kernel_regularizer=l1(0.001)
     model.add(Activation('relu'))
 #     model.add(LeakyReLU())
     model.add(MaxPooling2D(pool_size=(4, 1)))
 
     model.add(Reshape((-1,64*input_shape[1])))
-    model.add(Conv1D(128, 3, strides=1, padding='same', kernel_regularizer=l1(0.00001)))  # , kernel_regularizer=l1(0.00001)
+    model.add(Conv1D(128, 3, strides=1, padding='same'))  # , kernel_regularizer=l1(0.00001)
     model.add(Activation('relu'))
 #     model.add(LeakyReLU())
     model.add(MaxPooling1D(2))
@@ -316,19 +318,57 @@ def EmNet_creator(input_shape):
     model.add(Dropout(0.5))
     model.add(Bidirectional(LSTM(48, return_sequences=True), merge_mode='concat'))  # returns a sequence of vectors  , dropout=0.25
     model.add(Dropout(0.5))  # Attention
-    model.add(Bidirectional(LSTM(48), merge_mode='concat'))  # return a single vector  , dropout=0.25
+    model.add(Bidirectional(LSTM(48, return_sequences=True), merge_mode='concat'))  # return a single vector  , dropout=0.25
+    model.add(MaxPooling1D(pool_size=64))
     
-#     model.add(Flatten())
+    model.add(Flatten())
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(7, activation='softmax'))
     return model
 
+
+def get_2d_conv_model(input_shape):
+    ''' CNN-LSTM'''
+    inp = Input(shape=input_shape)
+    
+    x = Reshape((*input_shape, 1))(inp)
+    x = GaussianNoise(0.05)(x)
+    x = Conv2D(64, (6,1), strides=1, padding='same')(x)
+    x = Activation("relu")(x)
+    x = MaxPooling2D(pool_size=(4, 1))(x)
+    
+    x = Reshape((-1,64*input_shape[1]))(x)
+    x = Conv1D(128, 3, strides=1, padding='same', kernel_regularizer=l1(0.0005))(x)
+    x = Activation('relu')(x)
+    x = MaxPooling1D(2)(x)
+    x = BatchNormalization()(x)
+
+    x = Dropout(0.5)(x)
+    x = Bidirectional(LSTM(48, return_sequences=True), merge_mode='concat')(x)  # returns a sequence of vectors  , dropout=0.25
+    x = Dropout(0.5)(x)  # TODO: Try Attention
+    x = Bidirectional(LSTM(48, return_sequences=False), merge_mode='concat')(x)  # return a single vector  , dropout=0.25
+#     x1 = MaxPooling1D(pool_size=64)(x)
+#     x2 = AveragePooling1D(pool_size=64)(x)
+#     x = Concatenate()([x1, x2])
+    
+#     x = Flatten()(x)
+#     x = Dense(32, activation='relu')(x)
+#     x = Dropout(0.5)(x)
+    out = Dense(7, activation='softmax')(x)
+
+    model = keras.models.Model(inputs=inp, outputs=out)
+    return model
+
+
 hyper_params = {
     'lr':0.001,
-    'epochs':150,
-    'lr_decay':0.01
-#     'gpus':2
+    'epochs':250,
+    'lr_decay':0.05,
+    'gpus':1,
+    'batch_size':64
 }
-model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=EmNet_creator, **hyper_params)
+model = KerasModelAdapter(dl_dataset.get_input_shape(), model_creator=get_2d_conv_model, **hyper_params)
 print(model)
 # visualize model layout with pydot_ng
 model.plot_model()

@@ -17,6 +17,7 @@ from keras.callbacks import LearningRateScheduler, EarlyStopping
 from keras import backend as K
 
 from speechemotion.mlcode.model_base_class import Model
+from .KerasMutilGPU import ParallelModel
 
 def shuffle_train_data(X_train, Y_train):
     # 只打乱训练集
@@ -108,6 +109,7 @@ class KerasModelAdapter(Model):
         """fit之前需要先compile"""
         if self.gpus > 1:
             self.model = multi_gpu_model(self.model, self.gpus)
+            # self.model = ParallelModel(self.model, self.gpus)
         opt = keras.optimizers.Adam(lr=self.lr, decay=self.lr_decay)
         self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -141,11 +143,17 @@ class KerasModelAdapter(Model):
         self.show_history()
 
     def predict(self, X):
-        return np.argmax(self.model.predict(X).squeeze(), axis=1)
-        # return np.round(self.model.predict(X))
+        return np.argmax(self.predict_proba(X).squeeze(), axis=1)
+        # return np.round(self.model.predict(X)) # sigmoid
 
     def predict_proba(self, X):
-        return self.model.predict(X)
+        # avoid error "CUDNN_STATUS_BAD_PARAM" when using 2 gpu
+        ori_length = len(X)
+        padded_shape = list(X.shape)
+        padded_shape[0] = int(np.ceil(ori_length / float(self.batch_size)) * self.batch_size)
+        X_padded = np.zeros(padded_shape, dtype=X.dtype)
+        X_padded[0:ori_length] = X
+        return self.model.predict(X_padded)[0:ori_length]
 
     def clone_model(self):
         """reset graph and return a deep copy of this model object"""

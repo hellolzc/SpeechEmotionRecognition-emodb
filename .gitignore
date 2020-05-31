@@ -20,3 +20,4 @@ opensmile/audio_features_*
 *.pkf
 *.pk
 *.log
+*.h5
