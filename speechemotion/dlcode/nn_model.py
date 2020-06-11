@@ -55,6 +55,7 @@ class KerasModelAdapter(Model):
         self.gpus = params.pop('gpus', 1)
         self.batch_size = params.pop('batch_size', 64 * self.gpus)
         self.loss = params.pop('loss', 'categorical_crossentropy')
+        self.class_num params.pop('class_num', 7)
 
         if 'name' not in params:
             params['name'] = 'KerasModelAdapter'
@@ -125,10 +126,10 @@ class KerasModelAdapter(Model):
         # history = _model.fit(train_x, train_y, epochs=10, batch_size=32, validation_data=(val_x, val_y))
         # return self.model.fit(X_train, Y_train, epochs=20, batch_size=32, validation_data=validation_data)
         # 
-        Y_train = to_categorical(Y_train)
+        Y_train = to_categorical(Y_train, num_classes=self.class_num)
         if validation_data is not None:
             val_x, val_y = validation_data
-            val_y = to_categorical(val_y)
+            val_y = to_categorical(val_y, num_classes=self.class_num)
             validation_data = (val_x, val_y)
         batch_size = self.batch_size
         my_generator = generate_arrays_from_data(X_train, Y_train, batch_size)

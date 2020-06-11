@@ -2,7 +2,7 @@
 
 用 SVM、CNN-LSTM 进行语音情感识别。
 
-实现了一个情感识别领域比赛常用的基线 ComParE + SVM，在Emo-DB数据集识别准确率约 88% 。
+实现了一个情感识别领域比赛常用的基线 ComParE + SVM，在Emo-DB数据集识别UAR约 86% 。
 
 复现论文: Kim J, Saurous R A. Emotion Recognition from Human Speech Using Temporal Information and Deep Learning[C]//Interspeech. 2018: 937-940.
 

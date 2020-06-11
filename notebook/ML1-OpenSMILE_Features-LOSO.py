@@ -84,6 +84,7 @@ ser_datasets.df.iloc[:, 0:16].describe()
 
 import os
 from speechemotion.mlcode.data_splitter import KFoldSplitter
+data_splitter = KFoldSplitter(split_file_dir='../list/split_loso/')
 
 
 # In[ ]:
@@ -91,11 +92,8 @@ from speechemotion.mlcode.data_splitter import KFoldSplitter
 
 # 重新划分数据
 # 从这里开始 df里的数据顺序不能改变，否则会对不上号
-data_splitter = KFoldSplitter(n_splits=10, label_name='label')  # 
-
-os.system('rm ../list/split/*.json')
-os.system('rm ../list/result/*.json')
-data_splitter.split(ser_datasets.df, seeds=list(range(1998, 2018)))
+# data_splitter.clean()
+# data_splitter.split(ser_datasets.df, seeds=list(range(1998, 2018)))
 
 
 # # Train & Test
@@ -123,6 +121,11 @@ from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
 # from speechemotion.mlcode.roc import auc_classif
 from speechemotion.mlcode.main_exp import main_experiment
 from speechemotion.mlcode.mlmodel import SKLearnModelAdapter
+
+
+import warnings
+warnings.filterwarnings("ignore", message="The default value of cv will change from 3 to 5 in version 0.22.")
+warnings.filterwarnings("ignore", message="The default of the `iid` parameter will change from True to False in version 0.22")
 
 
 # In[ ]:
@@ -193,12 +196,12 @@ get_ipython().system('mkdir -p log')
 # In[ ]:
 
 
-
 from speechemotion.mlcode.main_exp import save_exp_log
+
 for key  in model_list:
     model = model_list[key]
     adapter = SKLearnModelAdapter(model)
-    result = main_experiment(ser_datasets, data_splitter, adapter)
+    result = main_experiment(ser_datasets, data_splitter, adapter, seeds=[2018,])
 
     conf_mx = result['conf_mx_sum']
     report = result['report']
@@ -229,14 +232,11 @@ for key  in model_list:
 #     'svm2':sklearn.svm.SVC(kernel='linear', C=0.1),
 # model = linear_model.LogisticRegression(C=0.1, penalty='l1')
 model = sklearn.svm.SVC(kernel='rbf', gamma=1e-4, C=10)
-import warnings
-warnings.filterwarnings("ignore", message="The default value of cv will change from 3 to 5 in version 0.22.")
-warnings.filterwarnings("ignore", message="The default of the `iid` parameter will change from True to False in version 0.22")
 
 X, Y = ser_datasets.get_XY()
 print(X.columns)
 # randomforest和logisticRegression已知对变量数量级和变化范围不敏感
-X_train, X_test, Y_train, Y_test, _ = ser_datasets.get_data_scaled(2000, 3, data_splitter=data_splitter)
+X_train, X_test, Y_train, Y_test, _ = ser_datasets.get_data_scaled(2018, 3, data_splitter=data_splitter)
 print(model)
 print(X.shape)  # _train
 plot_learning_curve(model, "Learning Curve", X_train, Y_train, train_sizes=np.linspace(0.2, 1.0, 5), ylim=(0.5,1.0))

@@ -153,7 +153,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     test_scores_std = np.std(test_scores, axis=1)
-    plt.grid()
+    plt.grid(True)
 
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                      train_scores_mean + train_scores_std, alpha=0.1,
@@ -202,7 +202,7 @@ def plot_confusion_matrix(cm, classes=None,
     # print(cm)
 
     fig, ax = plt.subplots(figsize=figsize)
-    plt.grid(None)
+    plt.grid(False)
     im = ax.imshow(cm_1, interpolation='nearest', cmap=cmap)
     ax.figure.colorbar(im, ax=ax, shrink=0.8)
     # We want to show all ticks...
@@ -233,7 +233,7 @@ def plot_confusion_matrix(cm, classes=None,
 def show_confusion_matrix(confmat, save_pic_path=None, figsize=(4, 4)):
     '''my simple version of '''
     _, ax = plt.subplots(figsize=figsize)
-    plt.grid(None)
+    plt.grid(False)
     ax.matshow(confmat, cmap=plt.cm.Reds, alpha=0.4)
     for i in range(confmat.shape[0]):
         for j in range(confmat.shape[1]):
