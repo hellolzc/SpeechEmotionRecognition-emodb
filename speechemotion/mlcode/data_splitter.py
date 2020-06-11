@@ -30,17 +30,37 @@ class DataSplitter(object):
         raise NotImplementedError
 
     @staticmethod
-    def array2CSstr(result_array):
+    def array2CSstr(result_array: np.ndarray) -> str:
         """convert result 1-d array to comma separated string"""
         result_list = [str(val) for val in list(result_array)]
         return ','.join(result_list)
 
     @staticmethod
-    def CSstr2array(result_str):
+    def CSstr2array(result_str: str) -> np.ndarray:
         """convert comma separated string to 1-d array"""
         result_list = result_str.split(',')
         return np.array([float(val) for val in result_list])
 
+    @staticmethod
+    def _check_directory(dir_path: str):
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+    @staticmethod
+    def _delete_files(dir_path: str, file_ext: str):
+        for files in os.listdir(dir_path):
+            if files.endswith(file_ext):  # ".json"
+                os.remove(os.path.join(dir_path, files))
+
+    def clean(self, split=True, result=False):
+        """清理已存在的分割文件, 方便重新开始"""
+        self._check_directory(self.result_file_dir)
+        self._check_directory(self.split_file_dir)
+        # 删除所有的json文件
+        if split:
+            self._delete_files(self.split_file_dir, '.json')
+        if result:
+            self._delete_files(self.result_file_dir, '.json')
 
 class KFoldSplitter(DataSplitter):
     """处理关于划分数据集的类"""
