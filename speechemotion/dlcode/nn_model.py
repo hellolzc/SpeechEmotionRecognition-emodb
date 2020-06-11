@@ -17,7 +17,6 @@ from keras.callbacks import LearningRateScheduler, EarlyStopping
 from keras import backend as K
 
 from speechemotion.mlcode.model_base_class import Model
-from .KerasMutilGPU import ParallelModel
 
 def shuffle_train_data(X_train, Y_train):
     # 只打乱训练集
@@ -118,7 +117,6 @@ class KerasModelAdapter(Model):
         """fit之前需要先compile"""
         if self.gpus > 1:
             self.model = multi_gpu_model(self.model, self.gpus)
-            # self.model = ParallelModel(self.model, self.gpus)
         opt = keras.optimizers.Adam(lr=self.lr, decay=self.lr_decay)
         self.model.compile(optimizer=opt, loss=self.loss, metrics=['accuracy'])
 

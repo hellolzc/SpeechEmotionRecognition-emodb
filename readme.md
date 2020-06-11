@@ -10,18 +10,32 @@
 
 &nbsp;
 
-## Environment
+## Environment & Requirments
+
+### Python
 
 Python >= 3.6
 
+```bash
+pip install -r requirements.txt
+```
+
+推荐使用Anaconda手动安装`requirements.txt`文件里的包
+
+### Tools
+
+- [Opensmile](https://github.com/naxingyu/opensmile)：提取特征
+
+具体参考 opensmile 目录下的 [readme.md](https://github.com/hellolzc/dementia_bank/tree/master/opensmile/scripts)
+
 &nbsp;
+
 
 ## Structure
 
 ```
 ├── speechemotion          // 所有模型的通用部分（从这里import相关的代码）
 ├── data                   // 存储数据和特征
-├── data_ori               // 存储原始数据集
 ├── fusion                 // 存储处理好的特征文件，通常为一个CSV文件
 ├── opensmile              // Opensmile 提取特征
 ├── list                   // 存储实验时的数据划分，不同划分对应的结果
@@ -32,22 +46,6 @@ Python >= 3.6
 
 &nbsp;
 
-## Requirments
-
-### Python
-
-```bash
-pip install -r requirements.txt
-```
-
-### Tools
-
-- [Opensmile](https://github.com/naxingyu/opensmile)：提取特征
-
-具体参考 opensmile 目录下的 [readme.md](https://github.com/hellolzc/dementia_bank/tree/master/opensmile/scripts)
-
-
-&nbsp;
 
 ## Datasets
 

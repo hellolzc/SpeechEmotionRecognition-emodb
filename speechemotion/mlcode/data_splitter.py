@@ -29,6 +29,10 @@ class DataSplitter(object):
         """读取预测结果"""
         raise NotImplementedError
 
+    def clean(self, split=True, result=False):
+        """清理已存在的分割文件, 方便重新开始"""
+        raise NotImplementedError
+
     @staticmethod
     def array2CSstr(result_array: np.ndarray) -> str:
         """convert result 1-d array to comma separated string"""
@@ -52,15 +56,6 @@ class DataSplitter(object):
             if files.endswith(file_ext):  # ".json"
                 os.remove(os.path.join(dir_path, files))
 
-    def clean(self, split=True, result=False):
-        """清理已存在的分割文件, 方便重新开始"""
-        self._check_directory(self.result_file_dir)
-        self._check_directory(self.split_file_dir)
-        # 删除所有的json文件
-        if split:
-            self._delete_files(self.split_file_dir, '.json')
-        if result:
-            self._delete_files(self.result_file_dir, '.json')
 
 class KFoldSplitter(DataSplitter):
     """处理关于划分数据集的类"""
@@ -161,5 +156,14 @@ class KFoldSplitter(DataSplitter):
             data_dict = json.load(f, encoding='utf-8')
         return data_dict
 
+    def clean(self, split=True, result=False):
+        """清理已存在的分割文件, 方便重新开始"""
+        self._check_directory(self.result_file_dir)
+        self._check_directory(self.split_file_dir)
+        # 删除所有的json文件
+        if split:
+            self._delete_files(self.split_file_dir, '.json')
+        if result:
+            self._delete_files(self.result_file_dir, '.json')
 
 
