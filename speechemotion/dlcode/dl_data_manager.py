@@ -31,6 +31,7 @@ class DLDataSet(DataSet):
         self.data_file_path = hdf5_file_path  # 数据文件的位置
         print('HDF5 File: %s' % hdf5_file_path)
         label_df = pd.read_csv(label_file_path, encoding='utf-8', index_col=0)
+        self.label_df = label_df
         self.label_se = label_df['label'].copy()  # 标签信息
         self.data_length = None  # 一个utterace的长度
         self.class_num = class_num

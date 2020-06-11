@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import inspect, html
 import tensorflow as tf
 
 import keras
@@ -54,6 +54,7 @@ class KerasModelAdapter(Model):
         self.verbose = params.pop('verbose', 0)
         self.gpus = params.pop('gpus', 1)
         self.batch_size = params.pop('batch_size', 64 * self.gpus)
+        self.loss = params.pop('loss', 'categorical_crossentropy')
 
         if 'name' not in params:
             params['name'] = 'KerasModelAdapter'
@@ -73,6 +74,14 @@ class KerasModelAdapter(Model):
 
     def __str__(self):
         return self.summary()
+
+    def __repr__(self):
+        try:
+            func_src = inspect.getsource(self.model_creator)
+            func_src = html.unescape(func_src)
+        except IOError:
+            func_src = "nocode"
+        return repr({'code':func_src, 'params':self.params, 'input_shape':self.input_shape})
 
     def _load_model(self, to_load):
         """
@@ -96,20 +105,20 @@ class KerasModelAdapter(Model):
 
     def summary(self):
         stringlist = []
-        stringlist.append(str(self.params))
+        stringlist.append('Params:' + str(self.params))
         self.model.summary(print_fn=lambda x: stringlist.append(x), line_length=90)
         short_model_summary = "\n".join(stringlist)
         return short_model_summary
 
-    def plot_model(self, file_path='./log/model2.png'):
-        plot_model(self.model, to_file=file_path, show_shapes=True)
+    def plot_model(self, file_path='./log/model2.png', show_shapes=True):
+        plot_model(self.model, to_file=file_path, show_shapes=show_shapes)
 
     def _compile_model(self):
         """fit之前需要先compile"""
         if self.gpus > 1:
             self.model = multi_gpu_model(self.model, self.gpus)
         opt = keras.optimizers.Adam(lr=self.lr, decay=self.lr_decay)
-        self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer=opt, loss=self.loss, metrics=['accuracy'])
 
     def fit(self, X_train, Y_train, validation_data=None):
         """return None"""
@@ -124,12 +133,13 @@ class KerasModelAdapter(Model):
         batch_size = self.batch_size
         my_generator = generate_arrays_from_data(X_train, Y_train, batch_size)
         steps_per_epoch = int(np.ceil(X_train.shape[0]/batch_size))
-        print("[INFO @ %s]"%__name__, "SampleNum:", X_train.shape[0], 'Steps & Batchsize:', steps_per_epoch, batch_size)
+        print("[INFO @ %s]"%__name__, "SampleNum:", X_train.shape[0], 'StepsPerEpoch:', steps_per_epoch,
+            'Batchsize:', batch_size)
         if self.lr_decay != 0.0:
             new_lr = self.lr * 1 / (1 + self.lr_decay*steps_per_epoch)
-            print("LearningRate will be %f after 1 eopch." % new_lr)
+            print("LearningRate will be %f after 1 epoch." % new_lr)
             new_lr = self.lr * 1 / (1 + self.lr_decay*steps_per_epoch*self.epochs)
-            print("LearningRate will be %f after last eopch." % new_lr)
+            print("LearningRate will be %f after last epoch." % new_lr)
 
         self._compile_model()
         # es = EarlyStopping(monitor='val_loss', patience=5)

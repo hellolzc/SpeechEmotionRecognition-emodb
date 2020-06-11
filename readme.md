@@ -2,7 +2,11 @@
 
 用 SVM、CNN-LSTM 进行语音情感识别。
 
-实现了一个领域常用的基线 ComParE + SVM，在Emo-DB数据集识别准确率约 88% 。
+实现了一个情感识别领域比赛常用的基线 ComParE + SVM，在Emo-DB数据集识别准确率约 88% 。
+
+复现论文: Kim J, Saurous R A. Emotion Recognition from Human Speech Using Temporal Information and Deep Learning[C]//Interspeech. 2018: 937-940.
+
+效果不如基线。
 
 &nbsp;
 
@@ -39,9 +43,6 @@ pip install -r requirements.txt
 ### Tools
 
 - [Opensmile](https://github.com/naxingyu/opensmile)：提取特征
-
-
-安装 [Opensmile](https://github.com/naxingyu/opensmile)。
 
 具体参考 opensmile 目录下的 [readme.md](https://github.com/hellolzc/dementia_bank/tree/master/opensmile/scripts)
 

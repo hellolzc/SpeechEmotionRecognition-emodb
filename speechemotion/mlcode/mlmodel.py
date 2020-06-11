@@ -25,6 +25,9 @@ class MLModel(Model):
     def __init__(self, **params):
         super(MLModel, self).__init__(**params)
 
+    def __str__(self):
+        return 'SK-Learn Model: '+ str(self.model)
+
     def save_model(self, save_path):
         pickle.dump(self.model, open(save_path, "wb"))
 
@@ -45,6 +48,11 @@ class MLModel(Model):
 
         return self.model.predict(samples)
 
+    def predict_proba(self, samples):
+        if not self.trained:
+            raise Exception("Model should be trained or loaded before doing predict\n")
+
+        return self.model.predict_proba(samples)
 
 
 class SVM(MLModel):
